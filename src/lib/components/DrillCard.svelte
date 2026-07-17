@@ -5,12 +5,34 @@
 	import Pill from './Pill.svelte';
 	import type { Drill } from '$lib/drills';
 
-	let { drill }: { drill: Drill } = $props();
+	let { drill, highlight = '' }: { drill: Drill; highlight?: string } = $props();
+
+	const highlightText = (text: string, query: string) => {
+		const term = query.trim();
+		if (!term) return [{ text, match: false }];
+
+		const index = text.toLowerCase().indexOf(term.toLowerCase());
+		if (index === -1) return [{ text, match: false }];
+
+		return [
+			{ text: text.slice(0, index), match: false },
+			{ text: text.slice(index, index + term.length), match: true },
+			{ text: text.slice(index + term.length), match: false }
+		].filter((part) => part.text);
+	};
 </script>
 
 <a class="drill-card" href={resolve('/drills/[slug]', { slug: drill.slug })}>
 	<div class="drill-card-heading">
-		<h3 class="drill-card-title">{drill.title}</h3>
+		<h3 class="drill-card-title">
+			{#each highlightText(drill.title, highlight) as part}
+				{#if part.match}
+					<mark>{part.text}</mark>
+				{:else}
+					{part.text}
+				{/if}
+			{/each}
+		</h3>
 		<svg
 			class="drill-card-arrow"
 			width="18"
@@ -27,7 +49,15 @@
 			<path d="m13 6 6 6-6 6" />
 		</svg>
 	</div>
-	<p class="drill-card-summary">{drill.summary}</p>
+	<p class="drill-card-summary">
+		{#each highlightText(drill.summary, highlight) as part}
+			{#if part.match}
+				<mark>{part.text}</mark>
+			{:else}
+				{part.text}
+			{/if}
+		{/each}
+	</p>
 	<div class="drill-card-pills">
 		<Pill color="gray">Players: {labelPlayers(drill)}</Pill>
 		{#each drill.difficulties as difficulty (difficulty)}
@@ -105,6 +135,13 @@
 		color: var(--muted);
 		font-size: 0.9rem;
 		line-height: 1.5;
+	}
+
+	mark {
+		border-radius: 3px;
+		background: var(--yellow-light);
+		color: inherit;
+		padding: 0 2px;
 	}
 
 	.drill-card-pills {

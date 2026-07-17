@@ -82,6 +82,7 @@
 		color: var(--white);
 		font-size: 0.72rem;
 		font-weight: 700;
+		animation: badge-pop 180ms ease;
 	}
 
 	.filter-section-chevron {
@@ -98,5 +99,31 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
+		animation: reveal-filters 180ms ease;
+		transform-origin: top;
+	}
+
+	@keyframes reveal-filters {
+		from {
+			opacity: 0;
+			transform: translateY(-4px) scaleY(0.98);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scaleY(1);
+		}
+	}
+
+	@keyframes badge-pop {
+		50% {
+			transform: scale(1.12);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.filter-section-content,
+		.filter-section-count {
+			animation: none;
+		}
 	}
 </style>

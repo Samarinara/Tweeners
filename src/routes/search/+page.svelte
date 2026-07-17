@@ -15,6 +15,7 @@
 	import FilterChip from '$lib/components/FilterChip.svelte';
 	import FilterSection from '$lib/components/FilterSection.svelte';
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
 
@@ -36,6 +37,8 @@
 	);
 
 	let showMoreFilters = $state(false);
+	let isScrolled = $state(false);
+	let randomizing = $state(false);
 
 	const toggle = <T,>(values: T[], value: T) =>
 		values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
@@ -81,11 +84,102 @@
 			(playerCount ? 1 : 0)
 	);
 
+	const clearAllFilters = () => {
+		query = '';
+		selectedDifficulties = [];
+		selectedAges = [];
+		selectedSkills = [];
+		selectedEquipment = [];
+		playerCount = '';
+	};
+
+	const activeFilterLabels = $derived([
+		...selectedDifficulties.map((value) => ({
+			key: `difficulty-${value}`,
+			label: difficulties[value],
+			remove: () => (selectedDifficulties = selectedDifficulties.filter((item) => item !== value))
+		})),
+		...selectedAges.map((value) => ({
+			key: `age-${value}`,
+			label: ageGroups[value],
+			remove: () => (selectedAges = selectedAges.filter((item) => item !== value))
+		})),
+		...selectedSkills.map((value) => ({
+			key: `skill-${value}`,
+			label: skillFocuses[value],
+			remove: () => (selectedSkills = selectedSkills.filter((item) => item !== value))
+		})),
+		...selectedEquipment.map((value) => ({
+			key: `equipment-${value}`,
+			label: equipment[value],
+			remove: () => (selectedEquipment = selectedEquipment.filter((item) => item !== value))
+		})),
+		...(playerCount
+			? [
+					{
+						key: 'players',
+						label: `${playerCount} player${playerCount === '1' ? '' : 's'}`,
+						remove: () => (playerCount = '')
+					}
+				]
+			: [])
+	]);
+
+	const searchSummary = $derived(
+		[
+			query.trim() ? `"${query.trim()}"` : '',
+			...activeFilterLabels.slice(0, 2).map((filter) => filter.label)
+		]
+			.filter(Boolean)
+			.join(' + ')
+	);
+
 	const randomDrill = () => {
 		const pool = filteredDrills.length ? filteredDrills : data.drills;
 		const drill = pool[Math.floor(Math.random() * pool.length)];
-		if (drill) window.location.href = `/drills/${drill.slug}`;
+		if (!drill) return;
+
+		randomizing = true;
+		window.setTimeout(() => {
+			window.location.href = `/drills/${drill.slug}`;
+		}, 220);
 	};
+
+	onMount(() => {
+		const handleScroll = () => {
+			isScrolled = window.scrollY > 4;
+		};
+		const handleKeydown = (event: KeyboardEvent) => {
+			if (
+				event.key === '/' &&
+				!event.metaKey &&
+				!event.ctrlKey &&
+				!event.altKey &&
+				document.activeElement instanceof HTMLElement &&
+				!['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)
+			) {
+				event.preventDefault();
+				document.querySelector<HTMLInputElement>('.search-input')?.focus();
+			}
+
+			if (event.key === 'Escape') {
+				if (query) {
+					query = '';
+				} else if (showMoreFilters) {
+					showMoreFilters = false;
+				}
+			}
+		};
+
+		handleScroll();
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		window.addEventListener('keydown', handleKeydown);
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+			window.removeEventListener('keydown', handleKeydown);
+		};
+	});
 
 	$effect(updateUrl);
 </script>
@@ -99,7 +193,7 @@
 </svelte:head>
 
 <main class="search-page">
-	<section class="search-section">
+	<section class="search-section" class:scrolled={isScrolled}>
 		<div class="container">
 			<h1 class="search-heading">Search drills</h1>
 
@@ -134,15 +228,49 @@
 					</label>
 					<button
 						class="more-filters-btn"
+						class:expanded={showMoreFilters}
 						type="button"
 						onclick={() => (showMoreFilters = !showMoreFilters)}
+						aria-expanded={showMoreFilters}
 					>
 						More filters
 						{#if activeFilterCount > 0}
 							<span class="filter-count-badge">{activeFilterCount}</span>
 						{/if}
+						<svg
+							class="more-filters-chevron"
+							width="14"
+							height="14"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="m6 9 6 6 6-6" />
+						</svg>
 					</button>
 				</div>
+
+				{#if query.trim() || activeFilterLabels.length > 0}
+					<div class="active-filters" aria-label="Active filters">
+						{#if query.trim()}
+							<button class="active-filter" type="button" onclick={() => (query = '')}>
+								Search: {query.trim()}
+								<span aria-hidden="true">x</span>
+							</button>
+						{/if}
+						{#each activeFilterLabels as filter (filter.key)}
+							<button class="active-filter" type="button" onclick={filter.remove}>
+								{filter.label}
+								<span aria-hidden="true">x</span>
+							</button>
+						{/each}
+						<button class="clear-filters" type="button" onclick={clearAllFilters}>Clear all</button>
+					</div>
+				{/if}
 
 				{#if showMoreFilters}
 					<div class="filters-expanded">
@@ -200,13 +328,20 @@
 	<section class="results-section" aria-label="Matching drills">
 		<div class="container">
 			<div class="results-header">
-				<h2>{filteredDrills.length} drill{filteredDrills.length !== 1 ? 's' : ''}</h2>
-				<button type="button" onclick={randomDrill} class="random-btn">Random drill</button>
+				<div>
+					<h2>{filteredDrills.length} drill{filteredDrills.length !== 1 ? 's' : ''}</h2>
+					{#if searchSummary}
+						<p class="results-summary">Showing drills for {searchSummary}</p>
+					{/if}
+				</div>
+				<button type="button" onclick={randomDrill} class="random-btn" class:randomizing>
+					{randomizing ? 'Choosing...' : 'Random drill'}
+				</button>
 			</div>
 
 			<div class="drill-grid">
 				{#each filteredDrills as drill (drill.slug)}
-					<DrillCard {drill} />
+					<DrillCard {drill} highlight={query} />
 				{/each}
 			</div>
 
@@ -215,14 +350,7 @@
 					<p>No drills match your filters.</p>
 					<button
 						type="button"
-						onclick={() => {
-							query = '';
-							selectedDifficulties = [];
-							selectedAges = [];
-							selectedSkills = [];
-							selectedEquipment = [];
-							playerCount = '';
-						}}
+						onclick={clearAllFilters}
 					>
 						Clear all filters
 					</button>
@@ -243,6 +371,11 @@
 		position: sticky;
 		top: 56px;
 		z-index: 50;
+		transition: box-shadow 180ms ease;
+	}
+
+	.search-section.scrolled {
+		box-shadow: 0 10px 26px rgba(15, 27, 45, 0.08);
 	}
 
 	.search-heading {
@@ -317,12 +450,25 @@
 		cursor: pointer;
 		transition:
 			background 150ms ease,
-			color 150ms ease;
+			color 150ms ease,
+			transform 120ms ease;
 	}
 
 	.more-filters-btn:hover {
 		background: var(--blue-light);
 		color: var(--blue);
+	}
+
+	.more-filters-btn:active {
+		transform: scale(0.98);
+	}
+
+	.more-filters-chevron {
+		transition: transform 180ms ease;
+	}
+
+	.more-filters-btn.expanded .more-filters-chevron {
+		transform: rotate(180deg);
 	}
 
 	.filter-count-badge {
@@ -343,6 +489,57 @@
 		margin-top: 16px;
 		display: grid;
 		gap: 0;
+		animation: filter-panel-in 180ms ease;
+		transform-origin: top;
+	}
+
+	.active-filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 14px;
+	}
+
+	.active-filter,
+	.clear-filters {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		min-height: 34px;
+		padding: 6px 12px;
+		border: none;
+		border-radius: 999px;
+		font-size: 0.8rem;
+		font-weight: 700;
+		transition:
+			background 150ms ease,
+			color 150ms ease,
+			transform 120ms ease;
+	}
+
+	.active-filter {
+		background: var(--blue-light);
+		color: var(--blue);
+	}
+
+	.active-filter span {
+		font-size: 0.8rem;
+		font-weight: 800;
+	}
+
+	.clear-filters {
+		background: var(--off-white);
+		color: var(--muted);
+	}
+
+	.active-filter:hover,
+	.clear-filters:hover {
+		transform: translateY(-1px);
+	}
+
+	.active-filter:active,
+	.clear-filters:active {
+		transform: scale(0.98);
 	}
 
 	.results-section {
@@ -362,6 +559,12 @@
 		font-weight: 600;
 	}
 
+	.results-summary {
+		margin-top: 2px;
+		color: var(--muted);
+		font-size: 0.85rem;
+	}
+
 	.random-btn {
 		padding: 8px 16px;
 		border: none;
@@ -371,11 +574,21 @@
 		font-size: 0.84rem;
 		font-weight: 700;
 		cursor: pointer;
-		transition: background 150ms ease;
+		transition:
+			background 150ms ease,
+			transform 120ms ease;
 	}
 
 	.random-btn:hover {
 		background: #009447;
+	}
+
+	.random-btn:active {
+		transform: scale(0.98);
+	}
+
+	.random-btn.randomizing {
+		animation: random-pulse 220ms ease infinite alternate;
 	}
 
 	.drill-grid {
@@ -421,6 +634,33 @@
 	@media (min-width: 1080px) {
 		.drill-grid {
 			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+
+	@keyframes filter-panel-in {
+		from {
+			opacity: 0;
+			transform: translateY(-6px) scaleY(0.98);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scaleY(1);
+		}
+	}
+
+	@keyframes random-pulse {
+		to {
+			transform: translateY(-1px);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.search-section,
+		.filters-expanded,
+		.more-filters-chevron,
+		.random-btn.randomizing {
+			animation: none;
+			transition: none;
 		}
 	}
 </style>
