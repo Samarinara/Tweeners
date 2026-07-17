@@ -1,226 +1,227 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import {
-		ageGroups,
-		difficulties,
-		equipment,
-		formatTag,
-		skillFocuses,
-		type AgeGroup,
-		type Difficulty,
-		type Equipment,
-		type SkillFocus
-	} from '$lib/drills/config';
-	import { labelPlayers, matchesDrill, sortDrills, type DrillFilters } from '$lib/drills/filter';
-	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import SearchBar from '$lib/components/SearchBar.svelte';
+	import CourtIllustration from '$lib/components/CourtIllustration.svelte';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
 
-	const searchParams = new URLSearchParams(
-		typeof window === 'undefined' ? '' : window.location.search
-	);
+	let query = $state('');
 
-	let query = $state(searchParams.get('q') ?? '');
-	let selectedDifficulties = $state<Difficulty[]>(
-		searchParams.getAll('difficulty') as Difficulty[]
-	);
-	let selectedAges = $state<AgeGroup[]>(searchParams.getAll('age') as AgeGroup[]);
-	let selectedSkills = $state<SkillFocus[]>(searchParams.getAll('skill') as SkillFocus[]);
-	let selectedEquipment = $state<Equipment[]>(searchParams.getAll('equipment') as Equipment[]);
-	let playerCount = $state(searchParams.get('players') ?? '');
-	let sort = $state<DrillFilters['sort']>(
-		(searchParams.get('sort') as DrillFilters['sort']) ?? 'title'
-	);
+	const randomDrill = data.drills[Math.floor(Math.random() * data.drills.length)];
+	const placeholder = randomDrill ? `Try "${randomDrill.title}"...` : 'Search drills...';
 
-	const toggle = <T,>(values: T[], value: T) =>
-		values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
-
-	const updateUrl = () => {
-		if (typeof window === 'undefined') return;
-
-		const params = new SvelteURLSearchParams();
-		if (query.trim()) params.set('q', query.trim());
-		selectedDifficulties.forEach((value) => params.append('difficulty', value));
-		selectedAges.forEach((value) => params.append('age', value));
-		selectedSkills.forEach((value) => params.append('skill', value));
-		selectedEquipment.forEach((value) => params.append('equipment', value));
-		if (playerCount) params.set('players', playerCount);
-		if (sort !== 'title') params.set('sort', sort);
-
-		const next = params.toString() ? `?${params}` : window.location.pathname;
-		window.history.replaceState({}, '', next);
+	const handleSearch = (q: string) => {
+		const params = new URLSearchParams();
+		if (q.trim()) params.set('q', q.trim());
+		const url = params.toString() ? `/search?${params}` : '/search';
+		goto(url);
 	};
-
-	const filters = $derived<DrillFilters>({
-		query,
-		difficulties: selectedDifficulties,
-		ages: selectedAges,
-		playerCount: playerCount ? Number(playerCount) : undefined,
-		skillFocus: selectedSkills,
-		equipment: selectedEquipment,
-		sort
-	});
-
-	const filteredDrills = $derived(
-		sortDrills(
-			data.drills.filter((drill) => matchesDrill(drill, filters)),
-			sort
-		)
-	);
-	const randomDrill = () => {
-		const pool = filteredDrills.length ? filteredDrills : data.drills;
-		const drill = pool[Math.floor(Math.random() * pool.length)];
-		if (drill) window.location.href = resolve('/drills/[slug]', { slug: drill.slug });
-	};
-
-	$effect(updateUrl);
 </script>
 
 <svelte:head>
 	<title>Tweeners Tennis Drill Library</title>
 	<meta
 		name="description"
-		content="A mobile-first library of tennis coaching drills filtered by difficulty, age, players, skills, and equipment."
+		content="Find the right tennis drill before the next ball rolls out. A searchable library for club and school coaches."
 	/>
 </svelte:head>
 
 <main>
-	<section class="finder-hero">
-		<div class="finder-copy">
-			<p class="eyebrow">Tweeners drill library</p>
-			<h1>Find the right tennis drill before the next ball rolls out.</h1>
-			<p>
-				Fast, typed, mdsvex-powered drill pages for club and school coaches who need practical
-				options courtside.
+	<section class="hero">
+		<div class="hero-content container">
+			<p class="hero-eyebrow">Tweeners</p>
+			<h1 class="hero-title">Find the right drill before the next ball rolls out.</h1>
+			<p class="hero-subtitle">
+				A searchable library of tennis coaching drills for club and school coaches who need
+				practical options courtside.
 			</p>
+			<div class="hero-search">
+				<SearchBar bind:value={query} {placeholder} onsubmit={handleSearch} />
+			</div>
 		</div>
-
-		<form class="finder" onsubmit={(event) => event.preventDefault()}>
-			<label>
-				<span>Search drills</span>
-				<input bind:value={query} type="search" placeholder="Rally, footwork, consistency..." />
-			</label>
-
-			<div class="finder-row">
-				<label>
-					<span>Players</span>
-					<input bind:value={playerCount} min="1" type="number" placeholder="Any" />
-				</label>
-				<label>
-					<span>Sort</span>
-					<select bind:value={sort}>
-						<option value="title">Title</option>
-						<option value="difficulty">Easiest first</option>
-						<option value="players">Fewest players</option>
-					</select>
-				</label>
-			</div>
-
-			<div class="filter-block">
-				<span>Difficulty</span>
-				<div class="chips">
-					{#each Object.entries(difficulties) as [value, label] (value)}
-						<button
-							class:active={selectedDifficulties.includes(value as Difficulty)}
-							type="button"
-							onclick={() =>
-								(selectedDifficulties = toggle(selectedDifficulties, value as Difficulty))}
-						>
-							{label}
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			<div class="filter-block">
-				<span>Age</span>
-				<div class="chips compact">
-					{#each Object.entries(ageGroups) as [value, label] (value)}
-						<button
-							class:active={selectedAges.includes(value as AgeGroup)}
-							type="button"
-							onclick={() => (selectedAges = toggle(selectedAges, value as AgeGroup))}
-						>
-							{label}
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			<div class="filter-block">
-				<span>Skill focus</span>
-				<div class="chips compact">
-					{#each Object.entries(skillFocuses) as [value, label] (value)}
-						<button
-							class:active={selectedSkills.includes(value as SkillFocus)}
-							type="button"
-							onclick={() => (selectedSkills = toggle(selectedSkills, value as SkillFocus))}
-						>
-							{label}
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			<div class="filter-block">
-				<span>I have</span>
-				<div class="chips compact">
-					{#each Object.entries(equipment) as [value, label] (value)}
-						<button
-							class:active={selectedEquipment.includes(value as Equipment)}
-							type="button"
-							onclick={() => (selectedEquipment = toggle(selectedEquipment, value as Equipment))}
-						>
-							{label}
-						</button>
-					{/each}
-				</div>
-			</div>
-		</form>
-	</section>
-
-	<section class="results-section" aria-label="Matching drills">
-		<div class="results-header">
-			<h2>{filteredDrills.length} drills</h2>
-			<button type="button" onclick={randomDrill}>Random drill</button>
-		</div>
-
-		<div class="drill-grid">
-			{#each filteredDrills as drill (drill.slug)}
-				<a class="drill-card" href={resolve('/drills/[slug]', { slug: drill.slug })}>
-					<div>
-						<h3>{drill.title}</h3>
-						<p>{drill.summary}</p>
-					</div>
-					<div class="card-meta">
-						<span>{labelPlayers(drill)} players</span>
-						<span
-							>{drill.difficulties.map((difficulty) => difficulties[difficulty]).join(', ')}</span
-						>
-					</div>
-					<div class="tag-row">
-						{#each drill.tags.slice(0, 4) as tag (tag)}
-							<span>{formatTag(tag)}</span>
-						{/each}
-					</div>
-				</a>
-			{/each}
+		<div class="hero-court" aria-hidden="true">
+			<CourtIllustration />
 		</div>
 	</section>
 
-	<section class="pitch-section">
-		<div>
-			<h2>Built for quick coaching decisions.</h2>
-			<p>
-				Each drill is one mdsvex file with validated metadata, which means new drills can be added
-				without touching the app shell. The library stays searchable, shareable, and ready for
-				static deployment.
-			</p>
+	<section class="features">
+		<div class="container">
+			<div class="features-grid">
+				<div class="feature-card feature-card--blue">
+					<h2>Browse the library</h2>
+					<p>
+						Every drill is one file with validated metadata. Search by skill, age,
+						difficulty, or equipment to find exactly what you need.
+					</p>
+				</div>
+				<div class="feature-card feature-card--green">
+					<h2>Filter what matters</h2>
+					<p>
+						Narrow down by player count, coaching focus, and available equipment.
+						No more scrolling through irrelevant results.
+					</p>
+				</div>
+				<div class="feature-card feature-card--yellow">
+					<h2>Plan your session</h2>
+					<p>
+						Pick drills, adapt variations, and print a clean page for court-side
+						use. Everything stays shareable and searchable.
+					</p>
+				</div>
+			</div>
 		</div>
-		<div class="court-mark" aria-hidden="true">
-			<div></div>
-			<div></div>
-			<div></div>
+	</section>
+
+	<section class="cta">
+		<div class="container cta-inner">
+			<h2>Ready to find a drill?</h2>
+			<a class="cta-button" href={resolve('/search')}>Search the library</a>
 		</div>
 	</section>
 </main>
+
+<style>
+	.hero {
+		background: var(--blue);
+		color: var(--white);
+		padding: 64px 0 48px;
+		overflow: hidden;
+	}
+
+	.hero-content {
+		display: grid;
+		gap: 16px;
+	}
+
+	.hero-eyebrow {
+		font-size: 0.8rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		opacity: 0.7;
+	}
+
+	.hero-title {
+		font-size: clamp(2rem, 5vw, 3.5rem);
+		max-width: 640px;
+	}
+
+	.hero-subtitle {
+		font-size: 1.1rem;
+		max-width: 520px;
+		opacity: 0.85;
+		line-height: 1.55;
+	}
+
+	.hero-search {
+		max-width: 520px;
+		margin-top: 8px;
+	}
+
+	.hero-court {
+		display: flex;
+		justify-content: center;
+		margin-top: 40px;
+		opacity: 0.25;
+	}
+
+	.features {
+		padding: 64px 0;
+	}
+
+	.features-grid {
+		display: grid;
+		gap: 16px;
+	}
+
+	.feature-card {
+		padding: 28px 24px;
+		border-radius: 16px;
+		color: var(--white);
+	}
+
+	.feature-card h2 {
+		font-size: 1.25rem;
+		margin-bottom: 8px;
+	}
+
+	.feature-card p {
+		font-size: 0.95rem;
+		line-height: 1.55;
+		opacity: 0.9;
+	}
+
+	.feature-card--blue {
+		background: var(--blue);
+	}
+
+	.feature-card--green {
+		background: var(--green);
+	}
+
+	.feature-card--yellow {
+		background: var(--yellow);
+		color: var(--ink);
+	}
+
+	.feature-card--yellow p {
+		opacity: 0.8;
+	}
+
+	.cta {
+		padding: 48px 0 80px;
+	}
+
+	.cta-inner {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+		text-align: center;
+	}
+
+	.cta h2 {
+		font-size: clamp(1.5rem, 3vw, 2.2rem);
+	}
+
+	.cta-button {
+		display: inline-flex;
+		align-items: center;
+		padding: 14px 28px;
+		background: var(--blue);
+		color: var(--white);
+		border-radius: 12px;
+		font-size: 1rem;
+		font-weight: 700;
+		text-decoration: none;
+		transition: background 150ms ease;
+	}
+
+	.cta-button:hover {
+		background: #004a92;
+	}
+
+	@media (min-width: 760px) {
+		.hero {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			align-items: center;
+			gap: 40px;
+			padding: 80px 0 64px;
+		}
+
+		.hero-content {
+			max-width: 600px;
+		}
+
+		.hero-court {
+			margin-top: 0;
+			justify-content: flex-end;
+		}
+
+		.features-grid {
+			grid-template-columns: repeat(3, 1fr);
+		}
+	}
+</style>
