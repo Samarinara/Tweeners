@@ -26,6 +26,15 @@
 </svelte:head>
 
 <main>
+	<div class="court" aria-hidden="true">
+		<div class="court-baseline"></div>
+		<div class="court-service-line"></div>
+		<div class="court-center-line"></div>
+		<div class="court-singles-left"></div>
+		<div class="court-singles-right"></div>
+		<div class="court-doubles-left"></div>
+		<div class="court-doubles-right"></div>
+	</div>
 	<p class="eyebrow">Tweeners</p>
 	<h1>Find the right drill<br />before the next ball rolls out.</h1>
 	<div class="search-wrapper">
@@ -43,12 +52,88 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		position: relative;
 		height: 100dvh;
 		padding: 32px;
 		background: var(--blue);
 		color: var(--white);
 		text-align: center;
 		overflow: hidden;
+	}
+
+	.court {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 60vw;
+		max-width: 500px;
+		height: 140vh;
+		background: var(--green);
+		pointer-events: none;
+	}
+
+	.court-baseline {
+		position: absolute;
+		top: 22%;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: var(--white);
+	}
+
+	.court-service-line {
+		position: absolute;
+		top: 65%;
+		left: 0;
+		right: 0;
+		height: 3px;
+		background: var(--white);
+	}
+
+	.court-center-line {
+		position: absolute;
+		top: 65%;
+		left: 50%;
+		width: 3px;
+		bottom: 0;
+		background: var(--white);
+	}
+
+	.court-singles-left {
+		position: absolute;
+		top: 22%;
+		left: 12%;
+		width: 3px;
+		bottom: 0;
+		background: var(--white);
+	}
+
+	.court-singles-right {
+		position: absolute;
+		top: 22%;
+		right: 12%;
+		width: 3px;
+		bottom: 0;
+		background: var(--white);
+	}
+
+	.court-doubles-left {
+		position: absolute;
+		top: 22%;
+		left: 0;
+		width: 3px;
+		bottom: 0;
+		background: var(--white);
+	}
+
+	.court-doubles-right {
+		position: absolute;
+		top: 22%;
+		right: 0;
+		width: 3px;
+		bottom: 0;
+		background: var(--white);
 	}
 
 	.eyebrow {
