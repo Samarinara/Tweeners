@@ -63,11 +63,11 @@
 
 	.court {
 		position: absolute;
-		top: 18%;
+		top: 10%;
 		left: 50%;
 		transform: translateX(-50%);
 		width: 90vw;
-		max-width: 780px;
+		max-width: 950px;
 		height: 140vh;
 		background: var(--green);
 		pointer-events: none;
@@ -78,7 +78,7 @@
 		top: 0;
 		left: 0;
 		right: 0;
-		height: 3px;
+		height: 7px;
 		background: var(--white);
 	}
 
@@ -87,7 +87,7 @@
 		top: 55%;
 		left: 0;
 		right: 0;
-		height: 3px;
+		height: 7px;
 		background: var(--white);
 	}
 
@@ -95,7 +95,7 @@
 		position: absolute;
 		top: 55%;
 		left: 50%;
-		width: 3px;
+		width: 7px;
 		bottom: 0;
 		background: var(--white);
 	}
@@ -104,7 +104,7 @@
 		position: absolute;
 		top: 0;
 		left: 12%;
-		width: 3px;
+		width: 7px;
 		bottom: 0;
 		background: var(--white);
 	}
@@ -113,7 +113,7 @@
 		position: absolute;
 		top: 0;
 		right: 12%;
-		width: 3px;
+		width: 7px;
 		bottom: 0;
 		background: var(--white);
 	}
@@ -122,7 +122,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 3px;
+		width: 7px;
 		bottom: 0;
 		background: var(--white);
 	}
@@ -131,7 +131,7 @@
 		position: absolute;
 		top: 0;
 		right: 0;
-		width: 3px;
+		width: 7px;
 		bottom: 0;
 		background: var(--white);
 	}
