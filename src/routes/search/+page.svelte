@@ -38,7 +38,6 @@
 
 	let showMoreFilters = $state(false);
 	let expandedFilterSection = $state<'difficulty' | 'age' | 'skill' | 'equipment' | null>(null);
-	let isScrolled = $state(false);
 	let randomizing = $state(false);
 
 	const toggle = <T,>(values: T[], value: T) =>
@@ -173,9 +172,6 @@
 	};
 
 	onMount(() => {
-		const handleScroll = () => {
-			isScrolled = window.scrollY > 4;
-		};
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (
 				event.key === '/' &&
@@ -198,12 +194,9 @@
 			}
 		};
 
-		handleScroll();
-		window.addEventListener('scroll', handleScroll, { passive: true });
 		window.addEventListener('keydown', handleKeydown);
 
 		return () => {
-			window.removeEventListener('scroll', handleScroll);
 			window.removeEventListener('keydown', handleKeydown);
 		};
 	});
@@ -220,7 +213,7 @@
 </svelte:head>
 
 <main class="search-page">
-	<section class="search-section" class:scrolled={isScrolled}>
+	<section class="search-section">
 		<div class="container">
 			<div class="search-header-row">
 				<h1 class="search-heading">Search drills</h1>
@@ -443,14 +436,6 @@
 	.search-section {
 		background: var(--white);
 		padding: 32px 0 24px;
-		position: sticky;
-		top: 56px;
-		z-index: 50;
-		transition: box-shadow 180ms ease;
-	}
-
-	.search-section.scrolled {
-		box-shadow: 0 10px 26px rgba(15, 27, 45, 0.08);
 	}
 
 	.search-heading {
@@ -915,7 +900,6 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.search-section,
 		.filters-expanded,
 		.random-btn.randomizing {
 			animation: none;
