@@ -10,10 +10,13 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"drills:validate": "vite-node scripts/validate-drills.ts",
+		"drills:new": "vite-node scripts/new-drill.ts",
+		"precommit": "pnpm run drills:validate && pnpm run check && pnpm run test",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
+		"test": "pnpm run test:unit -- --run"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
@@ -41,6 +44,7 @@
 		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.60.1",
 		"vite": "^8.0.16",
+		"vite-node": "^6.0.0",
 		"vitest": "^4.1.8",
 		"vitest-browser-svelte": "^2.1.1"
 	},
