@@ -1,42 +1,82 @@
-# sv
+# Tweeners
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Tweeners is a SvelteKit tennis drill library for club and school coaches. The site helps coaches find a practical drill courtside, filter by session constraints, and open a drill page with setup notes, coaching goals, progressions, variations, safety reminders, and print/share actions.
 
-## Creating a project
+## Site
 
-If you're seeing this, you've probably already done this step. Congrats!
+- `/` is a focused landing page with the Tweeners brand, court illustration, and a search box.
+- `/search` lists all drills and supports keyword search, player count, difficulty, age group, skill focus, equipment, sorting, active filter chips, and a random drill action.
+- `/drills/[slug]` renders each drill from MDsveX content with at-a-glance metadata, jump links, goals, setup content, progressions, variations, safety notes, copy link, and print controls.
 
-```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-pnpm dlx sv@0.16.3 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" tailwindcss="plugins:typography,forms" sveltekit-adapter="adapter:auto" mdsvex --install pnpm tweeners
-```
+Current drill content lives in `src/content/drills` and is loaded at build time.
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Install dependencies:
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm install
 ```
 
-## Building
-
-To create a production version of your app:
+Start the development server:
 
 ```sh
-npm run build
+pnpm run dev
 ```
 
-You can preview the production build with `npm run preview`.
+Run type and Svelte checks:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```sh
+pnpm run check
+```
+
+Run tests:
+
+```sh
+pnpm run test
+```
+
+Build for production:
+
+```sh
+pnpm run build
+```
+
+Preview the production build:
+
+```sh
+pnpm run preview
+```
+
+## Drill Content
+
+Create a new drill stub:
+
+```sh
+pnpm run drills:new -- "Drill Name"
+```
+
+Validate drill frontmatter:
+
+```sh
+pnpm run drills:validate
+```
+
+Each drill is an `.svx` file with frontmatter parsed by `src/lib/drills/schema.ts`. Frontmatter drives search, filtering, cards, and the drill page quick reference. The markdown body is rendered as the main setup/instruction content.
+
+Supported frontmatter includes:
+
+- `title`, `summary`, `goals`, and `safetyNotes`
+- `difficulties`, `ages`, `skillFocus`, `equipment`, and `optionalEquipment`
+- `playerCount`, `coaches`, and `durationMinutes`
+- `tags`, `instructions`, `progressions`, and `variations`
+
+Shared labels and valid filter keys are defined in `src/lib/drills/config.ts`.
+
+## Quality Checks
+
+The precommit script runs the drill validator, Svelte checks, and unit tests:
+
+```sh
+pnpm run precommit
+```
