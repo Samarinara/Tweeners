@@ -3,7 +3,7 @@ export const difficulties = {
 	orange: 'Orange ball / early development',
 	green: 'Green ball / building patterns',
 	yellow: 'Yellow ball / full court',
-	competitive: 'Competitive training'
+  competitive: 'Competitive training'
 } as const;
 
 export const ageGroups = {
@@ -20,13 +20,14 @@ export const skillFocuses = {
 	serve: 'Serve',
 	return: 'Return',
 	rally: 'Rally',
+  groundstrokes: 'Groundstrokes',
 	volley: 'Volley',
 	footwork: 'Footwork',
 	tactics: 'Tactics',
 	fitness: 'Fitness',
 	coordination: 'Coordination',
 	teamwork: 'Teamwork',
-	competition: 'Competition'
+  competition: 'Competition'
 } as const;
 
 export const equipment = {
@@ -34,9 +35,9 @@ export const equipment = {
 	cones: 'Cones',
 	targets: 'Targets',
 	hoops: 'Hoops',
-	lines: 'Throw-down lines',
-	baskets: 'Ball baskets',
-	rackets: 'Rackets'
+	strips: 'Throw-down lines',
+  baskets: 'Ball baskets',
+  buckets: 'Any bucket/container'
 } as const;
 
 export type Difficulty = keyof typeof difficulties;
