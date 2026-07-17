@@ -6,8 +6,13 @@
 
 	let query = $state('');
 
-	const randomDrill = data.drills[Math.floor(Math.random() * data.drills.length)];
-	const placeholder = randomDrill ? `Try "${randomDrill.title}"...` : 'Search drills...';
+	const placeholder = $derived.by(() => {
+		if (!data.drills.length) return 'Search drills...';
+
+		const dayIndex = Math.floor(Date.now() / 86_400_000);
+		const drill = data.drills[dayIndex % data.drills.length];
+		return `Try "${drill.title}"...`;
+	});
 
 	const handleSearch = (q: string) => {
 		const params = new URLSearchParams();
@@ -34,6 +39,7 @@
 		<div class="court-singles-right"></div>
 		<div class="court-doubles-left"></div>
 		<div class="court-doubles-right"></div>
+		<div class="court-ball"></div>
 	</div>
 	<p class="eyebrow">Tweeners</p>
 	<h1>Find the right drill<br />before the next ball rolls out.</h1>
@@ -71,6 +77,15 @@
 		height: 140vh;
 		background: var(--green);
 		pointer-events: none;
+		transition:
+			opacity 220ms ease,
+			transform 500ms ease;
+		animation: court-settle 900ms ease both;
+	}
+
+	main:has(.search-wrapper:focus-within) .court {
+		opacity: 0.82;
+		transform: translateX(-50%) scale(1.004);
 	}
 
 	.court-baseline {
@@ -136,6 +151,18 @@
 		background: var(--white);
 	}
 
+	.court-ball {
+		position: absolute;
+		top: 48%;
+		left: 63%;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: var(--yellow);
+		box-shadow: 0 3px 10px rgba(15, 27, 45, 0.18);
+		animation: ball-settle 900ms ease both;
+	}
+
 	.eyebrow {
 		position: relative;
 		z-index: 1;
@@ -160,6 +187,11 @@
 		z-index: 1;
 		width: 100%;
 		max-width: 480px;
+		transition: transform 180ms ease;
+	}
+
+	.search-wrapper:focus-within {
+		transform: translateY(-1px);
 	}
 
 	.flavour {
@@ -170,5 +202,34 @@
 		font-size: 0.95rem;
 		opacity: 0.7;
 		line-height: 1.55;
+	}
+
+	@keyframes court-settle {
+		from {
+			transform: translateX(-50%) scale(0.998);
+		}
+		to {
+			transform: translateX(-50%) scale(1);
+		}
+	}
+
+	@keyframes ball-settle {
+		from {
+			opacity: 0;
+			transform: translateY(8px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.court,
+		.court-ball,
+		.search-wrapper {
+			animation: none;
+			transition: none;
+		}
 	}
 </style>
