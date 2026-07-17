@@ -85,8 +85,8 @@
 	.court-service-line {
 		position: absolute;
 		top: 55%;
-		left: 0;
-		right: 0;
+		left: 12%;
+		right: 12%;
 		height: 7px;
 		background: var(--white);
 	}
