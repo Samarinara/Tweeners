@@ -39,10 +39,16 @@ describe('drill filters', () => {
 		expect.assertions(2);
 
 		expect(
-			matchesDrill(baseDrill, filters({ difficulties: ['orange'], ages: ['u10'], skillFocus: ['rally'] }))
+			matchesDrill(
+				baseDrill,
+				filters({ difficulties: ['orange'], ages: ['u10'], skillFocus: ['rally'] })
+			)
 		).toBe(true);
 		expect(
-			matchesDrill(baseDrill, filters({ difficulties: ['orange'], ages: ['u12'], skillFocus: ['rally'] }))
+			matchesDrill(
+				baseDrill,
+				filters({ difficulties: ['orange'], ages: ['u12'], skillFocus: ['rally'] })
+			)
 		).toBe(false);
 	});
 

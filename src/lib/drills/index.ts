@@ -16,7 +16,11 @@ const modules = import.meta.glob<DrillModule>('/src/content/drills/*.svx', {
 	eager: true
 });
 
-const slugFromPath = (path: string) => path.split('/').pop()?.replace(/\.svx$/, '') ?? path;
+const slugFromPath = (path: string) =>
+	path
+		.split('/')
+		.pop()
+		?.replace(/\.svx$/, '') ?? path;
 
 const buildSearchText = (drill: DrillFrontmatter) =>
 	[

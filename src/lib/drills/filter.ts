@@ -1,4 +1,11 @@
-import { ageGroupOrder, difficultyOrder, type AgeGroup, type Difficulty, type Equipment, type SkillFocus } from './config';
+import {
+	ageGroupOrder,
+	difficultyOrder,
+	type AgeGroup,
+	type Difficulty,
+	type Equipment,
+	type SkillFocus
+} from './config';
 import type { Drill } from './index';
 
 export type DrillFilters = {
@@ -50,7 +57,9 @@ export const sortDrills = (drills: Drill[], sort: DrillFilters['sort']) =>
 	});
 
 export const labelPlayers = (drill: Pick<Drill, 'playerCount'>) =>
-	drill.playerCount.max ? `${drill.playerCount.min}-${drill.playerCount.max}` : `${drill.playerCount.min}+`;
+	drill.playerCount.max
+		? `${drill.playerCount.min}-${drill.playerCount.max}`
+		: `${drill.playerCount.min}+`;
 
 export const minAgeIndex = (ages: AgeGroup[]) =>
 	Math.min(...ages.map((age) => ageGroupOrder.indexOf(age)));

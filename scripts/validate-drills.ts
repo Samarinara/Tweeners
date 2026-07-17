@@ -88,7 +88,9 @@ for (const file of await readdir(drillDirectory)) {
 		if (!result.success) {
 			failures += 1;
 			console.error(`Invalid drill ${basename(path)}:`);
-			console.error(result.error.issues.map((issue) => `- ${issue.path.join('.')}: ${issue.message}`).join('\n'));
+			console.error(
+				result.error.issues.map((issue) => `- ${issue.path.join('.')}: ${issue.message}`).join('\n')
+			);
 		}
 	} catch (error) {
 		failures += 1;

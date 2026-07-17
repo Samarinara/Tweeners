@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { ageGroups, difficulties, equipment, skillFocuses } from '$lib/drills/config';
 	import { labelPlayers } from '$lib/drills/filter';
 
@@ -13,7 +14,7 @@
 </svelte:head>
 
 <main class="drill-page">
-	<a class="back-link" href="/">Back to drill finder</a>
+	<a class="back-link" href={resolve('/')}>Back to drill finder</a>
 
 	<header class="drill-hero">
 		<div>
@@ -51,7 +52,7 @@
 		<div>
 			<h2>Goals</h2>
 			<ul>
-				{#each drill.goals as goal}
+				{#each drill.goals as goal (goal)}
 					<li>{goal}</li>
 				{/each}
 			</ul>
@@ -59,7 +60,7 @@
 		<div>
 			<h2>Safety</h2>
 			<ul>
-				{#each drill.safetyNotes as note}
+				{#each drill.safetyNotes as note (note)}
 					<li>{note}</li>
 				{/each}
 			</ul>
@@ -70,7 +71,7 @@
 		<section class="print-panel">
 			<h2>Instructions</h2>
 			<ol>
-				{#each drill.instructions as instruction}
+				{#each drill.instructions as instruction (instruction)}
 					<li>{instruction}</li>
 				{/each}
 			</ol>
@@ -81,13 +82,13 @@
 		<section class="variations">
 			<h2>Variations</h2>
 			<div class="variation-list">
-				{#each drill.variations as variation}
+				{#each drill.variations as variation (variation.title)}
 					<article>
 						<h3>{variation.title}</h3>
 						{#if variation.summary}<p>{variation.summary}</p>{/if}
 						{#if variation.instructions.length}
 							<ul>
-								{#each variation.instructions as instruction}
+								{#each variation.instructions as instruction (instruction)}
 									<li>{instruction}</li>
 								{/each}
 							</ul>
@@ -102,5 +103,7 @@
 		<Content />
 	</article>
 
-	<button class="print-button" type="button" onclick={() => window.print()}>Print compact version</button>
+	<button class="print-button" type="button" onclick={() => window.print()}
+		>Print compact version</button
+	>
 </main>

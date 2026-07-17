@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import {
 		ageGroups,
 		difficulties,
@@ -11,18 +12,25 @@
 		type SkillFocus
 	} from '$lib/drills/config';
 	import { labelPlayers, matchesDrill, sortDrills, type DrillFilters } from '$lib/drills/filter';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 
 	let { data } = $props();
 
-	const searchParams = new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search);
+	const searchParams = new URLSearchParams(
+		typeof window === 'undefined' ? '' : window.location.search
+	);
 
 	let query = $state(searchParams.get('q') ?? '');
-	let selectedDifficulties = $state<Difficulty[]>(searchParams.getAll('difficulty') as Difficulty[]);
+	let selectedDifficulties = $state<Difficulty[]>(
+		searchParams.getAll('difficulty') as Difficulty[]
+	);
 	let selectedAges = $state<AgeGroup[]>(searchParams.getAll('age') as AgeGroup[]);
 	let selectedSkills = $state<SkillFocus[]>(searchParams.getAll('skill') as SkillFocus[]);
 	let selectedEquipment = $state<Equipment[]>(searchParams.getAll('equipment') as Equipment[]);
 	let playerCount = $state(searchParams.get('players') ?? '');
-	let sort = $state<DrillFilters['sort']>((searchParams.get('sort') as DrillFilters['sort']) ?? 'title');
+	let sort = $state<DrillFilters['sort']>(
+		(searchParams.get('sort') as DrillFilters['sort']) ?? 'title'
+	);
 
 	const toggle = <T,>(values: T[], value: T) =>
 		values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
@@ -30,7 +38,7 @@
 	const updateUrl = () => {
 		if (typeof window === 'undefined') return;
 
-		const params = new URLSearchParams();
+		const params = new SvelteURLSearchParams();
 		if (query.trim()) params.set('q', query.trim());
 		selectedDifficulties.forEach((value) => params.append('difficulty', value));
 		selectedAges.forEach((value) => params.append('age', value));
@@ -53,11 +61,16 @@
 		sort
 	});
 
-	const filteredDrills = $derived(sortDrills(data.drills.filter((drill) => matchesDrill(drill, filters)), sort));
+	const filteredDrills = $derived(
+		sortDrills(
+			data.drills.filter((drill) => matchesDrill(drill, filters)),
+			sort
+		)
+	);
 	const randomDrill = () => {
 		const pool = filteredDrills.length ? filteredDrills : data.drills;
 		const drill = pool[Math.floor(Math.random() * pool.length)];
-		if (drill) window.location.href = `/drills/${drill.slug}`;
+		if (drill) window.location.href = resolve('/drills/[slug]', { slug: drill.slug });
 	};
 
 	$effect(updateUrl);
@@ -106,7 +119,7 @@
 			<div class="filter-block">
 				<span>Difficulty</span>
 				<div class="chips">
-					{#each Object.entries(difficulties) as [value, label]}
+					{#each Object.entries(difficulties) as [value, label] (value)}
 						<button
 							class:active={selectedDifficulties.includes(value as Difficulty)}
 							type="button"
@@ -122,7 +135,7 @@
 			<div class="filter-block">
 				<span>Age</span>
 				<div class="chips compact">
-					{#each Object.entries(ageGroups) as [value, label]}
+					{#each Object.entries(ageGroups) as [value, label] (value)}
 						<button
 							class:active={selectedAges.includes(value as AgeGroup)}
 							type="button"
@@ -137,7 +150,7 @@
 			<div class="filter-block">
 				<span>Skill focus</span>
 				<div class="chips compact">
-					{#each Object.entries(skillFocuses) as [value, label]}
+					{#each Object.entries(skillFocuses) as [value, label] (value)}
 						<button
 							class:active={selectedSkills.includes(value as SkillFocus)}
 							type="button"
@@ -152,7 +165,7 @@
 			<div class="filter-block">
 				<span>I have</span>
 				<div class="chips compact">
-					{#each Object.entries(equipment) as [value, label]}
+					{#each Object.entries(equipment) as [value, label] (value)}
 						<button
 							class:active={selectedEquipment.includes(value as Equipment)}
 							type="button"
@@ -173,18 +186,20 @@
 		</div>
 
 		<div class="drill-grid">
-			{#each filteredDrills as drill}
-				<a class="drill-card" href={`/drills/${drill.slug}`}>
+			{#each filteredDrills as drill (drill.slug)}
+				<a class="drill-card" href={resolve('/drills/[slug]', { slug: drill.slug })}>
 					<div>
 						<h3>{drill.title}</h3>
 						<p>{drill.summary}</p>
 					</div>
 					<div class="card-meta">
 						<span>{labelPlayers(drill)} players</span>
-						<span>{drill.difficulties.map((difficulty) => difficulties[difficulty]).join(', ')}</span>
+						<span
+							>{drill.difficulties.map((difficulty) => difficulties[difficulty]).join(', ')}</span
+						>
 					</div>
 					<div class="tag-row">
-						{#each drill.tags.slice(0, 4) as tag}
+						{#each drill.tags.slice(0, 4) as tag (tag)}
 							<span>{formatTag(tag)}</span>
 						{/each}
 					</div>
@@ -197,9 +212,9 @@
 		<div>
 			<h2>Built for quick coaching decisions.</h2>
 			<p>
-				Each drill is one mdsvex file with validated metadata, which means new drills can be
-				added without touching the app shell. The library stays searchable, shareable, and ready
-				for static deployment.
+				Each drill is one mdsvex file with validated metadata, which means new drills can be added
+				without touching the app shell. The library stays searchable, shareable, and ready for
+				static deployment.
 			</p>
 		</div>
 		<div class="court-mark" aria-hidden="true">
