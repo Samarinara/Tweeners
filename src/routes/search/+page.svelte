@@ -43,6 +43,14 @@
 	const toggle = <T,>(values: T[], value: T) =>
 		values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
 
+	const setPlayerCount = (next: number) => {
+		playerCount = next > 0 ? String(next) : '';
+	};
+
+	const adjustPlayerCount = (delta: number) => {
+		setPlayerCount(Math.max(0, Number(playerCount || 0) + delta));
+	};
+
 	const updateUrl = () => {
 		if (typeof window === 'undefined') return;
 
@@ -134,6 +142,14 @@
 			.join(' + ')
 	);
 
+	const emptySuggestion = $derived.by(() => {
+		if (selectedEquipment.length) return 'Try removing equipment filters first.';
+		if (selectedSkills.length) return 'Try one fewer skill focus.';
+		if (playerCount) return 'Try clearing the player count.';
+		if (query.trim()) return 'Try a broader search term like rally or footwork.';
+		return 'Try clearing one filter to widen the drill list.';
+	});
+
 	const randomDrill = () => {
 		const pool = filteredDrills.length ? filteredDrills : data.drills;
 		const drill = pool[Math.floor(Math.random() * pool.length)];
@@ -208,16 +224,21 @@
 					<FilterChip active={selectedDifficulties.length > 0} onclick={() => {}}>
 						Difficulty{selectedDifficulties.length ? ` (${selectedDifficulties.length})` : ''}
 					</FilterChip>
-					<label class="player-input">
-						<span class="sr-only">Players</span>
+					<div class="player-stepper" aria-label="Players">
+						<button type="button" aria-label="Decrease players" onclick={() => adjustPlayerCount(-1)}>
+							-
+						</button>
 						<input
 							bind:value={playerCount}
 							min="1"
 							type="number"
-							placeholder="Any #"
+							placeholder="Any"
 							class="player-count-input"
 						/>
-					</label>
+						<button type="button" aria-label="Increase players" onclick={() => adjustPlayerCount(1)}>
+							+
+						</button>
+					</div>
 					<label class="sort-select">
 						<span class="sr-only">Sort</span>
 						<select bind:value={sort} class="sort-input">
@@ -348,6 +369,7 @@
 			{#if filteredDrills.length === 0}
 				<div class="no-results">
 					<p>No drills match your filters.</p>
+					<p class="no-results-suggestion">{emptySuggestion}</p>
 					<button
 						type="button"
 						onclick={clearAllFilters}
@@ -402,20 +424,46 @@
 		flex-wrap: wrap;
 	}
 
-	.player-input {
-		display: contents;
+	.player-stepper {
+		display: inline-flex;
+		align-items: center;
+		min-height: 36px;
+		overflow: hidden;
+		border-radius: 999px;
+		background: var(--off-white);
+	}
+
+	.player-stepper button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 36px;
+		border: none;
+		background: transparent;
+		color: var(--muted);
+		font-weight: 800;
+		transition:
+			background 150ms ease,
+			color 150ms ease;
+	}
+
+	.player-stepper button:hover {
+		background: var(--blue-light);
+		color: var(--blue);
 	}
 
 	.player-count-input {
-		width: 80px;
-		padding: 6px 12px;
+		width: 58px;
+		height: 36px;
+		padding: 6px 4px;
 		border: none;
-		border-radius: 999px;
-		background: var(--off-white);
+		background: transparent;
 		color: var(--ink);
 		font-size: 0.84rem;
 		font-weight: 600;
 		text-align: center;
+		outline: none;
 	}
 
 	.player-count-input::placeholder {
@@ -604,6 +652,10 @@
 		padding: 48px 0;
 		color: var(--muted);
 		text-align: center;
+	}
+
+	.no-results-suggestion {
+		font-size: 0.9rem;
 	}
 
 	.no-results button {

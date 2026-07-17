@@ -30,7 +30,9 @@
 	<div class="drill-header">
 		<div class="container">
 			<a class="back-link" href={backHref}>Back to search</a>
-			<h1 class="drill-title">{drill.title}</h1>
+			<h1 class="drill-title" style={`view-transition-name: title-${drill.slug}`}>
+				{drill.title}
+			</h1>
 			<p class="drill-summary">{drill.summary}</p>
 		</div>
 	</div>

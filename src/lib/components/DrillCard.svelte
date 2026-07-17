@@ -29,9 +29,9 @@
 	};
 </script>
 
-<a class="drill-card" {href}>
+<a class="drill-card" {href} style={`view-transition-name: card-${drill.slug}`}>
 	<div class="drill-card-heading">
-		<h3 class="drill-card-title">
+		<h3 class="drill-card-title" style={`view-transition-name: title-${drill.slug}`}>
 			{#each highlightText(drill.title, highlight) as part}
 				{#if part.match}
 					<mark>{part.text}</mark>
