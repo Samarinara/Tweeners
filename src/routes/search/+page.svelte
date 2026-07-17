@@ -222,15 +222,15 @@
 <main class="search-page">
 	<section class="search-section" class:scrolled={isScrolled}>
 		<div class="container">
-			<h1 class="search-heading">Search drills</h1>
+			<div class="search-header-row">
+				<h1 class="search-heading">Search drills</h1>
 
-			<div class="search-bar-row">
-				<div class="search-bar-wrapper">
-					<SearchBar bind:value={query} placeholder="Rally, footwork, consistency..." />
+				<div class="search-bar-row">
+					<div class="search-bar-wrapper">
+						<SearchBar bind:value={query} placeholder="Rally, footwork, consistency..." />
+					</div>
 				</div>
-			</div>
 
-			<div class="filters">
 				<div class="controls-row" aria-label="Search controls">
 					<button
 						class="filters-menu-btn"
@@ -286,7 +286,9 @@
 						</select>
 					</label>
 				</div>
+			</div>
 
+			<div class="filters">
 				{#if query.trim() || activeFilterLabels.length > 0}
 					<div class="active-filters" aria-label="Active filters">
 						{#if query.trim()}
@@ -453,11 +455,18 @@
 
 	.search-heading {
 		font-size: 1.5rem;
-		margin-bottom: 16px;
+		margin: 0;
+		white-space: nowrap;
+	}
+
+	.search-header-row {
+		display: grid;
+		gap: 14px;
 	}
 
 	.search-bar-row {
-		max-width: 600px;
+		width: 100%;
+		min-width: 0;
 	}
 
 	.search-bar-wrapper {
@@ -465,7 +474,7 @@
 	}
 
 	.filters {
-		margin-top: 16px;
+		margin-top: 14px;
 	}
 
 	.controls-row {
@@ -473,6 +482,7 @@
 		align-items: center;
 		gap: 10px;
 		flex-wrap: wrap;
+		min-width: 0;
 	}
 
 	.filters-menu-btn {
@@ -845,12 +855,43 @@
 			font-size: 1.8rem;
 		}
 
+		.search-header-row {
+			grid-template-columns: minmax(150px, auto) minmax(360px, 1fr);
+			align-items: center;
+			column-gap: 20px;
+			row-gap: 12px;
+		}
+
+		.controls-row {
+			grid-column: 2;
+			justify-content: flex-start;
+		}
+
 		.drill-grid {
 			grid-template-columns: repeat(2, 1fr);
 		}
 	}
 
 	@media (min-width: 1080px) {
+		.search-header-row {
+			grid-template-columns: auto minmax(420px, 1fr) auto;
+			column-gap: 24px;
+		}
+
+		.controls-row {
+			grid-column: auto;
+			justify-content: flex-end;
+			flex-wrap: nowrap;
+		}
+
+		.search-bar-row {
+			max-width: none;
+		}
+
+		.filters-expanded {
+			max-width: none;
+		}
+
 		.drill-grid {
 			grid-template-columns: repeat(3, 1fr);
 		}
