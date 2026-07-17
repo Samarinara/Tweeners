@@ -1,0 +1,73 @@
+---
+title: Cookie Jar
+summary: A competitive feeding game where 2 teams collect cookies (points) for hitting balls over the net
+goals:
+  - Strengthen groundstroke consistency through repitition.
+  - Encourage player friendships through competitive teamwork.
+safetyNotes:
+  - Lineups of players should be properly spaced so that nobody is hit by errant racquet swings.
+  - Keep an eye on balls that hit the net so players do not slip on them
+  - The cookie jar and plates/bowls should be properly spaced out from the hitting player
+difficulties:
+  - red
+ages:
+  - u10
+playerCount:
+  min: 4
+  max: 10
+coaches: 2
+equipment:
+  - balls
+  - buckets
+optionalEquipment:
+  - strips
+  - cones
+skillFocus:
+  - groundstrokes
+tags:
+  - teamwork
+  - groundstroke hitting
+  - games
+durationMinutes: 15
+instructions:
+  - Add the first instruction.
+progressions:
+  - Reduce the size of the target area (No alleys, no service boxes)
+  - Shrink the gate on the opposing side
+  - Move players farther from the net
+  - More difficult tosses/feeds
+variations: []
+---
+
+## Setup
+
+1. Set up 2 lines behind the service line on either side of the court.
+2. Place a single basket of balls (ideally different from that balls players will be hitting) between the lines on the T
+3. Place 2 containers (buckets, hula hoops, or anything else that can hold balls) beside each lienup
+4. Place 2 cones on either side of the center line on the opposite end of the court to form a gate.
+5. Divide the players into 2 equally skilled teams in each line
+
+## Definitions
+**Cookie Jar:** The basket of balls between the 2 lines that players take from
+
+**Cookies:** The balls inside the cookie jar that represents points that teams earn
+
+**Team Plate/Bowl:** The hula hoops, buckets, or other containers beside each team where they place cookies from the cookie jar
+
+**Gate:** The space between the 2 cones on the other side of the net that the players must hit between (there may be multiple gates)
+
+## Game Instructions
+
+The player at the front of the line will be fed a ball (dropped or thrown depending on skill) and they will hit it over the net.
+
+If the ball lands in the court on the other side, the player gets to take **1** cookie from the cookie jar and place it with their team's plate/bowl. If the ball goes through the gate then the player gets **3** cookies to put in their plate/bowl
+
+The game continues until the cookie jar is empty. The players count the cookies in their plate/bowl and the team with the most cookies wins.
+
+## Coaching Cues
+
+**"Keep your eyes on the ball and bring the raquet to it"**
+
+**"Use the angle of your racquet and your body to direct the ball"**
+
+**"Bend your knees to help lift the ball over the net"**
