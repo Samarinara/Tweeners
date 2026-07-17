@@ -63,11 +63,11 @@
 
 	.court {
 		position: absolute;
-		top: 25%;
+		top: 18%;
 		left: 50%;
 		transform: translateX(-50%);
-		width: 80vw;
-		max-width: 680px;
+		width: 90vw;
+		max-width: 780px;
 		height: 140vh;
 		background: var(--green);
 		pointer-events: none;
