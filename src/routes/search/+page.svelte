@@ -29,9 +29,7 @@
 	);
 	let selectedAges = $state<AgeGroup[]>(searchParams.getAll('age') as AgeGroup[]);
 	let selectedSkills = $state<SkillFocus[]>(searchParams.getAll('skill') as SkillFocus[]);
-	let selectedEquipment = $state<Equipment[]>(
-		searchParams.getAll('equipment') as Equipment[]
-	);
+	let selectedEquipment = $state<Equipment[]>(searchParams.getAll('equipment') as Equipment[]);
 	let playerCount = $state(searchParams.get('players') ?? '');
 	let sort = $state<DrillFilters['sort']>(
 		(searchParams.get('sort') as DrillFilters['sort']) ?? 'title'
