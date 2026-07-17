@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-
-	let { currentPath = '/' }: { currentPath?: string } = $props();
+	import { page } from '$app/stores';
 </script>
 
 <header class="header">
@@ -11,7 +10,11 @@
 			Tweeners
 		</a>
 		<nav>
-			<a class="header-link" href={resolve('/search')}>Search drills</a>
+			<a
+				class="header-link"
+				class:active={$page.url.pathname.startsWith('/search')}
+				href={resolve('/search')}>Search drills</a
+			>
 		</nav>
 	</div>
 </header>
@@ -48,6 +51,11 @@
 		height: 18px;
 		border-radius: 50%;
 		background: var(--yellow);
+		transition: transform 200ms ease;
+	}
+
+	.header-logo:hover .header-logo-mark {
+		transform: translateY(-1px) rotate(18deg);
 	}
 
 	.header-link {
@@ -60,5 +68,16 @@
 
 	.header-link:hover {
 		color: var(--blue);
+	}
+
+	.header-link.active {
+		color: var(--blue);
+	}
+
+	.header-logo:focus-visible,
+	.header-link:focus-visible {
+		outline: 3px solid rgba(0, 85, 165, 0.28);
+		outline-offset: 4px;
+		border-radius: 6px;
 	}
 </style>

@@ -10,7 +10,10 @@
 	} = $props();
 </script>
 
-<button class="chip" class:chip--active={active} type="button" {onclick}>
+<button class="chip" class:chip--active={active} type="button" aria-pressed={active} {onclick}>
+	{#if active}
+		<span class="chip-check" aria-hidden="true"></span>
+	{/if}
 	{@render children()}
 </button>
 
@@ -26,9 +29,11 @@
 		font-size: 0.84rem;
 		font-weight: 600;
 		cursor: pointer;
+		min-height: 36px;
 		transition:
 			background 150ms ease,
-			color 150ms ease;
+			color 150ms ease,
+			transform 120ms ease;
 	}
 
 	.chip:hover {
@@ -42,5 +47,23 @@
 
 	.chip--active:hover {
 		background: #009447;
+	}
+
+	.chip:active {
+		transform: scale(0.98);
+	}
+
+	.chip:focus-visible {
+		outline: 3px solid rgba(0, 85, 165, 0.28);
+		outline-offset: 2px;
+	}
+
+	.chip-check {
+		width: 5px;
+		height: 9px;
+		margin-right: 4px;
+		border-right: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		transform: translateY(-1px) rotate(45deg);
 	}
 </style>
