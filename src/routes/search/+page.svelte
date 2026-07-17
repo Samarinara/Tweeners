@@ -37,6 +37,7 @@
 	);
 
 	let showMoreFilters = $state(false);
+	let expandedFilterSection = $state<'difficulty' | 'age' | 'skill' | 'equipment' | null>(null);
 	let isScrolled = $state(false);
 	let randomizing = $state(false);
 
@@ -99,6 +100,16 @@
 		selectedSkills = [];
 		selectedEquipment = [];
 		playerCount = '';
+	};
+
+	const openFilters = (section: typeof expandedFilterSection = null) => {
+		showMoreFilters = true;
+		expandedFilterSection = section;
+	};
+
+	const closeFilters = () => {
+		showMoreFilters = false;
+		expandedFilterSection = null;
 	};
 
 	const activeFilterLabels = $derived([
@@ -179,10 +190,10 @@
 			}
 
 			if (event.key === 'Escape') {
-				if (query) {
+				if (showMoreFilters) {
+					closeFilters();
+				} else if (query) {
 					query = '';
-				} else if (showMoreFilters) {
-					showMoreFilters = false;
 				}
 			}
 		};
@@ -220,11 +231,38 @@
 			</div>
 
 			<div class="filters">
-				<div class="filters-primary">
-					<FilterChip active={selectedDifficulties.length > 0} onclick={() => {}}>
-						Difficulty{selectedDifficulties.length ? ` (${selectedDifficulties.length})` : ''}
-					</FilterChip>
+				<div class="controls-row" aria-label="Search controls">
+					<button
+						class="filters-menu-btn"
+						class:expanded={showMoreFilters}
+						type="button"
+						onclick={() => (showMoreFilters ? closeFilters() : openFilters())}
+						aria-expanded={showMoreFilters}
+						aria-controls="filters-menu"
+					>
+						<span>{showMoreFilters ? 'Close filters' : 'Open filters'}</span>
+						{#if activeFilterCount > 0}
+							<span class="filter-count-badge">{activeFilterCount}</span>
+						{/if}
+						<svg
+							class="filters-menu-icon"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							aria-hidden="true"
+						>
+							<path d="M3 6h18" />
+							<path d="M7 12h10" />
+							<path d="M10 18h4" />
+						</svg>
+					</button>
 					<div class="player-stepper" aria-label="Players">
+						<span class="control-label">Players</span>
 						<button type="button" aria-label="Decrease players" onclick={() => adjustPlayerCount(-1)}>
 							-
 						</button>
@@ -240,39 +278,13 @@
 						</button>
 					</div>
 					<label class="sort-select">
-						<span class="sr-only">Sort</span>
+						<span class="control-label">Sort</span>
 						<select bind:value={sort} class="sort-input">
 							<option value="title">Title</option>
 							<option value="difficulty">Easiest first</option>
 							<option value="players">Fewest players</option>
 						</select>
 					</label>
-					<button
-						class="more-filters-btn"
-						class:expanded={showMoreFilters}
-						type="button"
-						onclick={() => (showMoreFilters = !showMoreFilters)}
-						aria-expanded={showMoreFilters}
-					>
-						More filters
-						{#if activeFilterCount > 0}
-							<span class="filter-count-badge">{activeFilterCount}</span>
-						{/if}
-						<svg
-							class="more-filters-chevron"
-							width="14"
-							height="14"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							aria-hidden="true"
-						>
-							<path d="m6 9 6 6 6-6" />
-						</svg>
-					</button>
 				</div>
 
 				{#if query.trim() || activeFilterLabels.length > 0}
@@ -294,8 +306,29 @@
 				{/if}
 
 				{#if showMoreFilters}
-					<div class="filters-expanded">
-						<FilterSection label="Difficulty" expanded={true} count={selectedDifficulties.length}>
+					<div class="filters-expanded" id="filters-menu" role="region" aria-label="Filters menu">
+						<div class="filters-menu-header">
+							<div>
+								<h2>Filters</h2>
+								<p>
+									{filteredDrills.length} matching drill{filteredDrills.length === 1 ? '' : 's'}
+								</p>
+							</div>
+							<div class="filters-menu-actions">
+								{#if activeFilterCount > 0}
+									<button type="button" class="menu-text-btn" onclick={clearAllFilters}>Clear</button>
+								{/if}
+								<button type="button" class="menu-close-btn" onclick={closeFilters} aria-label="Close filters">
+									<span aria-hidden="true"></span>
+								</button>
+							</div>
+						</div>
+
+						<FilterSection
+							label="Difficulty"
+							bind:expanded={() => expandedFilterSection === 'difficulty', (value) => (expandedFilterSection = value ? 'difficulty' : null)}
+							count={selectedDifficulties.length}
+						>
 							{#each Object.entries(difficulties) as [value, label] (value)}
 								<FilterChip
 									active={selectedDifficulties.includes(value as Difficulty)}
@@ -307,7 +340,11 @@
 							{/each}
 						</FilterSection>
 
-						<FilterSection label="Age group" expanded={true} count={selectedAges.length}>
+						<FilterSection
+							label="Age group"
+							bind:expanded={() => expandedFilterSection === 'age', (value) => (expandedFilterSection = value ? 'age' : null)}
+							count={selectedAges.length}
+						>
 							{#each Object.entries(ageGroups) as [value, label] (value)}
 								<FilterChip
 									active={selectedAges.includes(value as AgeGroup)}
@@ -318,7 +355,11 @@
 							{/each}
 						</FilterSection>
 
-						<FilterSection label="Skill focus" expanded={true} count={selectedSkills.length}>
+						<FilterSection
+							label="Skill focus"
+							bind:expanded={() => expandedFilterSection === 'skill', (value) => (expandedFilterSection = value ? 'skill' : null)}
+							count={selectedSkills.length}
+						>
 							{#each Object.entries(skillFocuses) as [value, label] (value)}
 								<FilterChip
 									active={selectedSkills.includes(value as SkillFocus)}
@@ -329,7 +370,11 @@
 							{/each}
 						</FilterSection>
 
-						<FilterSection label="Equipment" expanded={true} count={selectedEquipment.length}>
+						<FilterSection
+							label="Equipment"
+							bind:expanded={() => expandedFilterSection === 'equipment', (value) => (expandedFilterSection = value ? 'equipment' : null)}
+							count={selectedEquipment.length}
+						>
 							{#each Object.entries(equipment) as [value, label] (value)}
 								<FilterChip
 									active={selectedEquipment.includes(value as Equipment)}
@@ -340,6 +385,12 @@
 								</FilterChip>
 							{/each}
 						</FilterSection>
+
+						<div class="filters-menu-footer">
+							<button type="button" class="done-btn" onclick={closeFilters}>
+								Show {filteredDrills.length} drill{filteredDrills.length === 1 ? '' : 's'}
+							</button>
+						</div>
 					</div>
 				{/if}
 			</div>
@@ -417,20 +468,63 @@
 		margin-top: 16px;
 	}
 
-	.filters-primary {
+	.controls-row {
 		display: flex;
 		align-items: center;
 		gap: 10px;
 		flex-wrap: wrap;
 	}
 
+	.filters-menu-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 38px;
+		padding: 7px 14px;
+		border: none;
+		border-radius: 999px;
+		background: var(--blue);
+		color: var(--white);
+		font-size: 0.84rem;
+		font-weight: 800;
+		transition:
+			background 150ms ease,
+			transform 120ms ease;
+	}
+
+	.filters-menu-btn:hover {
+		background: #00498f;
+	}
+
+	.filters-menu-btn.expanded {
+		background: var(--ink);
+	}
+
+	.filters-menu-btn:active {
+		transform: scale(0.98);
+	}
+
+	.filters-menu-icon {
+		flex-shrink: 0;
+	}
+
+	.control-label {
+		color: var(--muted);
+		font-size: 0.75rem;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
 	.player-stepper {
 		display: inline-flex;
 		align-items: center;
+		gap: 2px;
 		min-height: 36px;
 		overflow: hidden;
 		border-radius: 999px;
 		background: var(--off-white);
+		padding-left: 12px;
 	}
 
 	.player-stepper button {
@@ -471,52 +565,23 @@
 	}
 
 	.sort-select {
-		display: contents;
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 38px;
+		padding-left: 12px;
+		border-radius: 999px;
+		background: var(--off-white);
 	}
 
 	.sort-input {
-		padding: 6px 12px;
+		padding: 6px 12px 6px 0;
 		border: none;
 		border-radius: 999px;
-		background: var(--off-white);
+		background: transparent;
 		color: var(--ink);
 		font-size: 0.84rem;
 		font-weight: 600;
-	}
-
-	.more-filters-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		padding: 6px 14px;
-		border: none;
-		border-radius: 999px;
-		background: var(--off-white);
-		color: var(--muted);
-		font-size: 0.84rem;
-		font-weight: 600;
-		cursor: pointer;
-		transition:
-			background 150ms ease,
-			color 150ms ease,
-			transform 120ms ease;
-	}
-
-	.more-filters-btn:hover {
-		background: var(--blue-light);
-		color: var(--blue);
-	}
-
-	.more-filters-btn:active {
-		transform: scale(0.98);
-	}
-
-	.more-filters-chevron {
-		transition: transform 180ms ease;
-	}
-
-	.more-filters-btn.expanded .more-filters-chevron {
-		transform: rotate(180deg);
 	}
 
 	.filter-count-badge {
@@ -537,8 +602,110 @@
 		margin-top: 16px;
 		display: grid;
 		gap: 0;
+		max-width: 680px;
+		padding: 18px;
+		border: 1px solid #e5e7eb;
+		border-radius: 8px;
+		background: var(--white);
+		box-shadow: 0 18px 40px rgba(15, 27, 45, 0.12);
 		animation: filter-panel-in 180ms ease;
 		transform-origin: top;
+	}
+
+	.filters-menu-header,
+	.filters-menu-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	.filters-menu-header {
+		padding-bottom: 12px;
+		border-bottom: 1px solid #e5e7eb;
+	}
+
+	.filters-menu-header h2 {
+		font-size: 1rem;
+	}
+
+	.filters-menu-header p {
+		color: var(--muted);
+		font-size: 0.84rem;
+	}
+
+	.filters-menu-actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.menu-text-btn,
+	.menu-close-btn,
+	.done-btn {
+		border: none;
+		font-size: 0.84rem;
+		font-weight: 800;
+		transition:
+			background 150ms ease,
+			color 150ms ease,
+			transform 120ms ease;
+	}
+
+	.menu-text-btn {
+		min-height: 34px;
+		padding: 6px 12px;
+		border-radius: 999px;
+		background: var(--off-white);
+		color: var(--muted);
+	}
+
+	.menu-close-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border-radius: 999px;
+		background: var(--ink);
+		color: var(--white);
+	}
+
+	.menu-close-btn span,
+	.menu-close-btn span::after {
+		display: block;
+		width: 14px;
+		height: 2px;
+		border-radius: 999px;
+		background: currentColor;
+		content: '';
+	}
+
+	.menu-close-btn span {
+		transform: rotate(45deg);
+	}
+
+	.menu-close-btn span::after {
+		transform: rotate(90deg);
+	}
+
+	.filters-menu-footer {
+		padding-top: 16px;
+	}
+
+	.done-btn {
+		width: 100%;
+		min-height: 40px;
+		padding: 9px 16px;
+		border-radius: 999px;
+		background: var(--green);
+		color: var(--white);
+	}
+
+	.menu-text-btn:hover,
+	.menu-close-btn:hover,
+	.done-btn:hover {
+		transform: translateY(-1px);
 	}
 
 	.active-filters {
@@ -709,7 +876,6 @@
 	@media (prefers-reduced-motion: reduce) {
 		.search-section,
 		.filters-expanded,
-		.more-filters-chevron,
 		.random-btn.randomizing {
 			animation: none;
 			transition: none;
