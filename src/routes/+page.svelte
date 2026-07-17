@@ -39,7 +39,6 @@
 		<div class="court-singles-right"></div>
 		<div class="court-doubles-left"></div>
 		<div class="court-doubles-right"></div>
-		<div class="court-ball"></div>
 	</div>
 	<p class="eyebrow">Tweeners</p>
 	<h1>Find the right drill<br />before the next ball rolls out.</h1>
@@ -61,7 +60,7 @@
 		position: relative;
 		height: 100dvh;
 		padding: 32px;
-		background: var(--blue);
+		background: var(--green);
 		color: var(--white);
 		text-align: center;
 		overflow: hidden;
@@ -75,17 +74,9 @@
 		width: 90vw;
 		max-width: 950px;
 		height: 140vh;
-		background: var(--green);
+		background: var(--blue);
 		pointer-events: none;
-		transition:
-			opacity 220ms ease,
-			transform 500ms ease;
 		animation: court-settle 900ms ease both;
-	}
-
-	main:has(.search-wrapper:focus-within) .court {
-		opacity: 0.82;
-		transform: translateX(-50%) scale(1.004);
 	}
 
 	.court-baseline {
@@ -151,18 +142,6 @@
 		background: var(--white);
 	}
 
-	.court-ball {
-		position: absolute;
-		top: 48%;
-		left: 63%;
-		width: 16px;
-		height: 16px;
-		border-radius: 50%;
-		background: var(--yellow);
-		box-shadow: 0 3px 10px rgba(15, 27, 45, 0.18);
-		animation: ball-settle 900ms ease both;
-	}
-
 	.eyebrow {
 		position: relative;
 		z-index: 1;
@@ -213,20 +192,8 @@
 		}
 	}
 
-	@keyframes ball-settle {
-		from {
-			opacity: 0;
-			transform: translateY(8px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
 	@media (prefers-reduced-motion: reduce) {
 		.court,
-		.court-ball,
 		.search-wrapper {
 			animation: none;
 			transition: none;
