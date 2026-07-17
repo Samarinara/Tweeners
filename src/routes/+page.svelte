@@ -63,12 +63,12 @@
 
 	.court {
 		position: absolute;
-		top: 62%;
+		top: 25%;
 		left: 50%;
 		transform: translateX(-50%);
 		width: 80vw;
 		max-width: 680px;
-		height: 100vh;
+		height: 140vh;
 		background: var(--green);
 		pointer-events: none;
 	}
@@ -137,6 +137,8 @@
 	}
 
 	.eyebrow {
+		position: relative;
+		z-index: 1;
 		font-size: 0.8rem;
 		font-weight: 700;
 		letter-spacing: 0.08em;
@@ -146,17 +148,23 @@
 	}
 
 	h1 {
+		position: relative;
+		z-index: 1;
 		font-size: clamp(1.8rem, 5vw, 3.2rem);
 		max-width: 600px;
 		margin-bottom: 32px;
 	}
 
 	.search-wrapper {
+		position: relative;
+		z-index: 1;
 		width: 100%;
 		max-width: 480px;
 	}
 
 	.flavour {
+		position: relative;
+		z-index: 1;
 		margin-top: 24px;
 		max-width: 400px;
 		font-size: 0.95rem;
