@@ -1,11 +1,18 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { page } from '$app/stores';
 	import { difficulties, formatTag } from '$lib/drills/config';
 	import { labelPlayers } from '$lib/drills/filter';
 	import Pill from './Pill.svelte';
 	import type { Drill } from '$lib/drills';
 
 	let { drill, highlight = '' }: { drill: Drill; highlight?: string } = $props();
+	const href = $derived.by(() => {
+		const base = resolve('/drills/[slug]', { slug: drill.slug });
+		if (!$page.url.pathname.startsWith('/search')) return base;
+
+		return `${base}?from=${encodeURIComponent(`${$page.url.pathname}${$page.url.search}`)}`;
+	});
 
 	const highlightText = (text: string, query: string) => {
 		const term = query.trim();
@@ -22,7 +29,7 @@
 	};
 </script>
 
-<a class="drill-card" href={resolve('/drills/[slug]', { slug: drill.slug })}>
+<a class="drill-card" {href}>
 	<div class="drill-card-heading">
 		<h3 class="drill-card-title">
 			{#each highlightText(drill.title, highlight) as part}

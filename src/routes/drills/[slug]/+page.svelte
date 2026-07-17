@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { page } from '$app/stores';
 	import { ageGroups, difficulties, equipment, skillFocuses } from '$lib/drills/config';
 	import { labelPlayers } from '$lib/drills/filter';
 	import Pill from '$lib/components/Pill.svelte';
@@ -7,6 +8,17 @@
 	let { data } = $props();
 	const drill = $derived(data.drill);
 	const Content = $derived(drill.component);
+	let copied = $state(false);
+	const backHref = $derived.by(() => {
+		const from = $page.url.searchParams.get('from');
+		return from?.startsWith('/search') ? from : resolve('/search');
+	});
+
+	const copyLink = async () => {
+		await navigator.clipboard.writeText(window.location.href);
+		copied = true;
+		window.setTimeout(() => (copied = false), 1400);
+	};
 </script>
 
 <svelte:head>
@@ -17,13 +29,51 @@
 <main class="drill-page">
 	<div class="drill-header">
 		<div class="container">
-			<a class="back-link" href={resolve('/search')}>← Back to search</a>
+			<a class="back-link" href={backHref}>Back to search</a>
 			<h1 class="drill-title">{drill.title}</h1>
 			<p class="drill-summary">{drill.summary}</p>
 		</div>
 	</div>
 
 	<div class="drill-content container">
+		<section class="at-a-glance" aria-label="At a glance">
+			<div>
+				<span>Players</span>
+				<strong>{labelPlayers(drill)}</strong>
+			</div>
+			{#if drill.durationMinutes}
+				<div>
+					<span>Time</span>
+					<strong>{drill.durationMinutes} min</strong>
+				</div>
+			{/if}
+			{#if drill.coaches}
+				<div>
+					<span>Coaches</span>
+					<strong>{drill.coaches}+</strong>
+				</div>
+			{/if}
+			<div>
+				<span>Difficulty</span>
+				<strong>{difficulties[drill.difficulties[0]]}</strong>
+			</div>
+		</section>
+
+		<nav class="drill-jump-nav" aria-label="Drill sections">
+			{#if drill.goals.length > 0}
+				<a href="#goals">Goals</a>
+			{/if}
+			{#if drill.instructions.length > 0}
+				<a href="#instructions">Instructions</a>
+			{/if}
+			{#if drill.variations.length > 0}
+				<a href="#variations">Variations</a>
+			{/if}
+			{#if drill.safetyNotes.length > 0}
+				<a href="#safety">Safety</a>
+			{/if}
+		</nav>
+
 		<div class="drill-pills">
 			{#each drill.difficulties as difficulty (difficulty)}
 				<Pill color="green">{difficulties[difficulty]}</Pill>
@@ -47,7 +97,7 @@
 		</div>
 
 		{#if drill.goals.length > 0}
-			<section class="drill-section">
+			<section class="drill-section" id="goals">
 				<h2>Goals</h2>
 				<ul>
 					{#each drill.goals as goal (goal)}
@@ -58,7 +108,7 @@
 		{/if}
 
 		{#if drill.instructions.length > 0}
-			<section class="drill-section">
+			<section class="drill-section drill-instructions" id="instructions">
 				<h2>Instructions</h2>
 				<ol>
 					{#each drill.instructions as instruction (instruction)}
@@ -73,7 +123,7 @@
 		</article>
 
 		{#if drill.variations.length > 0}
-			<section class="drill-section">
+			<section class="drill-section" id="variations">
 				<h2>Variations</h2>
 				<div class="variations-grid">
 					{#each drill.variations as variation (variation.title)}
@@ -106,7 +156,7 @@
 		{/if}
 
 		{#if drill.safetyNotes.length > 0}
-			<section class="drill-section drill-safety">
+			<section class="drill-section drill-safety" id="safety">
 				<h2>Safety</h2>
 				<ul>
 					{#each drill.safetyNotes as note (note)}
@@ -116,8 +166,10 @@
 			</section>
 		{/if}
 
-		<div class="drill-print">
-			<button type="button" onclick={() => window.print()}>Print this drill</button>
+		<div class="drill-actions">
+			<a class="drill-action-link" href={backHref}>Back</a>
+			<button type="button" onclick={copyLink}>{copied ? 'Copied' : 'Copy link'}</button>
+			<button type="button" onclick={() => window.print()}>Print</button>
 		</div>
 	</div>
 </main>
@@ -132,12 +184,22 @@
 	.back-link {
 		display: inline-flex;
 		align-items: center;
+		gap: 6px;
 		color: rgba(255, 255, 255, 0.7);
 		font-size: 0.85rem;
 		font-weight: 600;
 		text-decoration: none;
 		margin-bottom: 20px;
 		transition: color 150ms ease;
+	}
+
+	.back-link::before {
+		content: '';
+		width: 8px;
+		height: 8px;
+		border-left: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		transform: rotate(45deg);
 	}
 
 	.back-link:hover {
@@ -161,6 +223,68 @@
 		padding-bottom: 80px;
 	}
 
+	.at-a-glance {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1px;
+		overflow: hidden;
+		margin-bottom: 20px;
+		border-radius: 8px;
+		background: #dfe7ee;
+	}
+
+	.at-a-glance div {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+		min-height: 72px;
+		padding: 14px;
+		background: var(--white);
+	}
+
+	.at-a-glance span {
+		color: var(--muted);
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.at-a-glance strong {
+		color: var(--ink);
+		font-size: 0.95rem;
+		line-height: 1.25;
+	}
+
+	.drill-jump-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-bottom: 20px;
+	}
+
+	.drill-jump-nav a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 34px;
+		padding: 6px 12px;
+		border-radius: 999px;
+		background: var(--off-white);
+		color: var(--muted);
+		font-size: 0.82rem;
+		font-weight: 700;
+		transition:
+			background 150ms ease,
+			color 150ms ease,
+			transform 120ms ease;
+	}
+
+	.drill-jump-nav a:hover {
+		background: var(--blue-light);
+		color: var(--blue);
+		transform: translateY(-1px);
+	}
+
 	.drill-pills {
 		display: flex;
 		flex-wrap: wrap;
@@ -170,6 +294,7 @@
 
 	.drill-section {
 		margin-bottom: 32px;
+		scroll-margin-top: 88px;
 	}
 
 	.drill-section h2 {
@@ -188,6 +313,35 @@
 
 	.drill-section li {
 		margin-bottom: 6px;
+	}
+
+	.drill-instructions ol {
+		padding-left: 0;
+		list-style: none;
+		counter-reset: instruction;
+	}
+
+	.drill-instructions li {
+		display: grid;
+		grid-template-columns: 32px 1fr;
+		gap: 12px;
+		align-items: start;
+		counter-increment: instruction;
+		color: var(--ink);
+	}
+
+	.drill-instructions li::before {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 28px;
+		height: 28px;
+		border-radius: 999px;
+		background: var(--green-light);
+		color: var(--pill-green-text);
+		font-size: 0.82rem;
+		font-weight: 800;
+		content: counter(instruction);
 	}
 
 	.drill-body {
@@ -271,7 +425,8 @@
 	.drill-safety {
 		padding: 20px;
 		background: var(--yellow-light);
-		border-radius: 12px;
+		border-left: 4px solid var(--yellow);
+		border-radius: 8px;
 	}
 
 	.drill-safety h2 {
@@ -282,11 +437,19 @@
 		color: var(--pill-yellow-text);
 	}
 
-	.drill-print {
+	.drill-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
 		margin-top: 24px;
 	}
 
-	.drill-print button {
+	.drill-actions button,
+	.drill-action-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 38px;
 		padding: 8px 16px;
 		border: none;
 		border-radius: 999px;
@@ -297,12 +460,20 @@
 		cursor: pointer;
 		transition:
 			background 150ms ease,
-			color 150ms ease;
+			color 150ms ease,
+			transform 120ms ease;
 	}
 
-	.drill-print button:hover {
+	.drill-actions button:hover,
+	.drill-action-link:hover {
 		background: var(--blue-light);
 		color: var(--blue);
+		transform: translateY(-1px);
+	}
+
+	.drill-actions button:active,
+	.drill-action-link:active {
+		transform: scale(0.98);
 	}
 
 	@media (min-width: 760px) {
@@ -312,6 +483,30 @@
 
 		.variations-grid {
 			grid-template-columns: repeat(2, 1fr);
+		}
+
+		.at-a-glance {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 759px) {
+		.drill-content {
+			padding-bottom: 112px;
+		}
+
+		.drill-actions {
+			position: fixed;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 80;
+			justify-content: center;
+			margin: 0;
+			padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+			background: rgba(255, 255, 255, 0.94);
+			box-shadow: 0 -8px 24px rgba(15, 27, 45, 0.1);
+			backdrop-filter: blur(12px);
 		}
 	}
 
@@ -323,7 +518,8 @@
 		}
 
 		.back-link,
-		.drill-print {
+		.drill-actions,
+		.drill-jump-nav {
 			display: none;
 		}
 
