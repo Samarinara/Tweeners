@@ -18,13 +18,24 @@
 
 	let { data } = $props();
 
-	let query = $state(data.initialQuery);
-	let selectedDifficulties = $state<Difficulty[]>(data.initialDifficulties as Difficulty[]);
-	let selectedAges = $state<AgeGroup[]>(data.initialAges as AgeGroup[]);
-	let selectedSkills = $state<SkillFocus[]>(data.initialSkills as SkillFocus[]);
-	let selectedEquipment = $state<Equipment[]>(data.initialEquipment as Equipment[]);
-	let playerCount = $state(data.initialPlayers);
-	let sort = $state<DrillFilters['sort']>(data.initialSort as DrillFilters['sort']);
+	const searchParams =
+		typeof window === 'undefined'
+			? new URLSearchParams()
+			: new URLSearchParams(window.location.search);
+
+	let query = $state(searchParams.get('q') ?? '');
+	let selectedDifficulties = $state<Difficulty[]>(
+		searchParams.getAll('difficulty') as Difficulty[]
+	);
+	let selectedAges = $state<AgeGroup[]>(searchParams.getAll('age') as AgeGroup[]);
+	let selectedSkills = $state<SkillFocus[]>(searchParams.getAll('skill') as SkillFocus[]);
+	let selectedEquipment = $state<Equipment[]>(
+		searchParams.getAll('equipment') as Equipment[]
+	);
+	let playerCount = $state(searchParams.get('players') ?? '');
+	let sort = $state<DrillFilters['sort']>(
+		(searchParams.get('sort') as DrillFilters['sort']) ?? 'title'
+	);
 
 	let showMoreFilters = $state(false);
 
