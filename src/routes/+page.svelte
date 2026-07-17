@@ -63,19 +63,19 @@
 
 	.court {
 		position: absolute;
-		top: 0;
+		top: 62%;
 		left: 50%;
 		transform: translateX(-50%);
-		width: 60vw;
-		max-width: 500px;
-		height: 140vh;
+		width: 80vw;
+		max-width: 680px;
+		height: 100vh;
 		background: var(--green);
 		pointer-events: none;
 	}
 
 	.court-baseline {
 		position: absolute;
-		top: 22%;
+		top: 0;
 		left: 0;
 		right: 0;
 		height: 3px;
@@ -84,7 +84,7 @@
 
 	.court-service-line {
 		position: absolute;
-		top: 65%;
+		top: 55%;
 		left: 0;
 		right: 0;
 		height: 3px;
@@ -93,7 +93,7 @@
 
 	.court-center-line {
 		position: absolute;
-		top: 65%;
+		top: 55%;
 		left: 50%;
 		width: 3px;
 		bottom: 0;
@@ -102,7 +102,7 @@
 
 	.court-singles-left {
 		position: absolute;
-		top: 22%;
+		top: 0;
 		left: 12%;
 		width: 3px;
 		bottom: 0;
@@ -111,7 +111,7 @@
 
 	.court-singles-right {
 		position: absolute;
-		top: 22%;
+		top: 0;
 		right: 12%;
 		width: 3px;
 		bottom: 0;
@@ -120,7 +120,7 @@
 
 	.court-doubles-left {
 		position: absolute;
-		top: 22%;
+		top: 0;
 		left: 0;
 		width: 3px;
 		bottom: 0;
@@ -129,7 +129,7 @@
 
 	.court-doubles-right {
 		position: absolute;
-		top: 22%;
+		top: 0;
 		right: 0;
 		width: 3px;
 		bottom: 0;
