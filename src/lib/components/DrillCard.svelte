@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 	import { difficulties, formatTag } from '$lib/drills/config';
 	import { labelPlayers } from '$lib/drills/filter';
 	import Pill from './Pill.svelte';
@@ -9,6 +10,7 @@
 	let { drill, highlight = '' }: { drill: Drill; highlight?: string } = $props();
 	const href = $derived.by(() => {
 		const base = resolve('/drills/[slug]', { slug: drill.slug });
+		if (!browser) return base;
 		if (!$page.url.pathname.startsWith('/search')) return base;
 
 		return `${base}?from=${encodeURIComponent(`${$page.url.pathname}${$page.url.search}`)}`;

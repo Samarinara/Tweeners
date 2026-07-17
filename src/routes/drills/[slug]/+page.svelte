@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 	import { ageGroups, difficulties, equipment, skillFocuses } from '$lib/drills/config';
 	import { labelPlayers } from '$lib/drills/filter';
 	import Pill from '$lib/components/Pill.svelte';
@@ -10,6 +11,7 @@
 	const Content = $derived(drill.component);
 	let copied = $state(false);
 	const backHref = $derived.by(() => {
+		if (!browser) return resolve('/search');
 		const from = $page.url.searchParams.get('from');
 		return from?.startsWith('/search') ? from : resolve('/search');
 	});
