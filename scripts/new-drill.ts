@@ -39,6 +39,7 @@ playerCount:
 coaches: 1
 equipment:
   - balls
+optionalEquipment: []
 skillFocus:
   - rally
 tags:

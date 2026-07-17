@@ -12,7 +12,6 @@
 	let copied = $state(false);
 	const sectionLinks = $derived.by(() =>
 		[
-			drill.instructions.length > 0 && { href: '#instructions', label: 'Steps' },
 			{ href: '#setup', label: 'Setup' },
 			drill.progressions.length > 0 && { href: '#progressions', label: 'Progressions' },
 			drill.variations.length > 0 && { href: '#variations', label: 'Variations' },
@@ -20,6 +19,9 @@
 		].filter((link): link is { href: string; label: string } => Boolean(link))
 	);
 	const equipmentList = $derived(drill.equipment.map((item) => equipment[item]).join(', '));
+	const optionalEquipmentList = $derived(
+		drill.optionalEquipment.map((item) => equipment[item]).join(', ')
+	);
 	const skillList = $derived(drill.skillFocus.map((skill) => skillFocuses[skill]).join(', '));
 	const backHref = $derived.by(() => {
 		if (!browser) return resolve('/search');
@@ -92,6 +94,12 @@
 							<strong>{equipmentList}</strong>
 						</div>
 					{/if}
+					{#if drill.optionalEquipment.length > 0}
+						<div class="quick-row">
+							<span>Optional equipment</span>
+							<strong>{optionalEquipmentList}</strong>
+						</div>
+					{/if}
 					{#if drill.skillFocus.length > 0}
 						<div class="quick-row">
 							<span>Focus</span>
@@ -125,17 +133,6 @@
 								<li>{goal}</li>
 							{/each}
 						</ul>
-					</section>
-				{/if}
-
-				{#if drill.instructions.length > 0}
-					<section class="drill-section drill-instructions" id="instructions">
-						<h2>Steps</h2>
-						<ol>
-							{#each drill.instructions as instruction (instruction)}
-								<li>{instruction}</li>
-							{/each}
-						</ol>
 					</section>
 				{/if}
 
@@ -457,57 +454,19 @@
 		color: var(--ink);
 	}
 
-	.drill-section ul,
-	.drill-section ol {
+	.drill-section ul {
 		margin: 0;
 		padding-left: 22px;
 		color: var(--muted);
 		line-height: 1.65;
 	}
 
+	.drill-section ul {
+		list-style: disc;
+	}
+
 	.drill-section li {
 		margin-bottom: 5px;
-	}
-
-	.drill-instructions {
-		padding: 18px;
-		border: 1px solid rgba(0, 85, 165, 0.12);
-		border-radius: 8px;
-		background: var(--white);
-		box-shadow: 0 12px 28px rgba(15, 27, 45, 0.06);
-	}
-
-	.drill-instructions ol {
-		padding-left: 0;
-		list-style: none;
-		counter-reset: instruction;
-	}
-
-	.drill-instructions li {
-		display: grid;
-		grid-template-columns: 30px 1fr;
-		gap: 11px;
-		align-items: start;
-		counter-increment: instruction;
-		color: var(--ink);
-	}
-
-	.drill-instructions li + li {
-		margin-top: 10px;
-	}
-
-	.drill-instructions li::before {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 28px;
-		height: 28px;
-		border-radius: 999px;
-		background: var(--green-light);
-		color: var(--pill-green-text);
-		font-size: 0.82rem;
-		font-weight: 800;
-		content: counter(instruction);
 	}
 
 	.drill-body {
@@ -543,6 +502,14 @@
 	.drill-body :global(ol) {
 		padding-left: 22px;
 		color: var(--muted);
+	}
+
+	.drill-body :global(ul) {
+		list-style: disc;
+	}
+
+	.drill-body :global(ol) {
+		list-style: decimal;
 	}
 
 	.drill-body :global(li) {
@@ -637,6 +604,7 @@
 		color: var(--muted);
 		font-size: 0.9rem;
 		line-height: 1.55;
+		list-style: disc;
 	}
 
 	.variation-card li {

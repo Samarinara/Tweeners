@@ -12,6 +12,7 @@ const baseDrill: Drill = {
 	playerCount: { min: 2, max: 8 },
 	coaches: 1,
 	equipment: ['balls', 'cones'],
+	optionalEquipment: ['targets'],
 	skillFocus: ['rally'],
 	tags: ['cooperative-rally'],
 	durationMinutes: 15,

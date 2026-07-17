@@ -28,6 +28,8 @@ const buildSearchText = (drill: DrillFrontmatter) =>
 		drill.summary,
 		drill.goals.join(' '),
 		drill.skillFocus.join(' '),
+		drill.equipment.join(' '),
+		drill.optionalEquipment.join(' '),
 		drill.tags.join(' '),
 		drill.difficulties.join(' '),
 		drill.ages.join(' ')

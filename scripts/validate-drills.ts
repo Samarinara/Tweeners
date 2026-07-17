@@ -8,6 +8,7 @@ const frontmatterPattern = /^---\n([\s\S]*?)\n---/;
 
 const parseScalar = (value: string) => {
 	const trimmed = value.trim();
+	if (trimmed === '[]') return [];
 	if (/^\d+$/.test(trimmed)) return Number(trimmed);
 	if (trimmed === 'true') return true;
 	if (trimmed === 'false') return false;

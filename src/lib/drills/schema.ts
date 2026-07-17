@@ -32,6 +32,7 @@ export const drillFrontmatterSchema = z.object({
 	playerCount: playerCountSchema,
 	coaches: z.number().int().positive().optional(),
 	equipment: z.array(z.enum(keys(equipment))).default([]),
+	optionalEquipment: z.array(z.enum(keys(equipment))).default([]),
 	skillFocus: z.array(z.enum(keys(skillFocuses))).default([]),
 	tags: z.array(z.string().trim().min(1).transform(normalizeTag)).default([]),
 	durationMinutes: z.number().int().positive().optional(),
