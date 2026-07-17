@@ -1,0 +1,85 @@
+---
+title: Rally River
+summary: Players guide cooperative rallies through target zones to build control, teamwork, and recovery habits.
+goals:
+  - Build rally consistency with a clear shared target.
+  - Encourage players to recover early after each shot.
+  - Give coaches simple ways to scale challenge inside one activity.
+safetyNotes:
+  - Keep spare balls behind the baseline or in baskets.
+  - Leave clear space between hitting pairs.
+  - Pause play before players cross another pair's hitting lane.
+difficulties:
+  - red
+  - orange
+  - green
+ages:
+  - u8
+  - u10
+  - u12
+playerCount:
+  min: 2
+  max: 12
+coaches: 1
+equipment:
+  - balls
+  - cones
+  - targets
+skillFocus:
+  - rally
+  - footwork
+  - teamwork
+tags:
+  - cooperative rally
+  - consistency
+  - movement
+durationMinutes: 15
+instructions:
+  - Mark a river target through the middle of the court with cones or flat targets.
+  - Pair players across the net and start with a coach-fed or player-fed ball.
+  - Pairs score one point when both players land a ball in or over the river target during the same rally.
+  - After each rally, players reset quickly and call out one adjustment before restarting.
+progressions:
+  - Shrink the river target as control improves.
+  - Add a recovery cone that players must touch after each shot.
+  - Move from cooperative scoring to first pair to seven river points.
+variations:
+  - title: Red Ball Catch-Rally
+    summary: Players catch after one bounce, self-drop, and send the ball back toward the river.
+    difficulties:
+      - red
+    ages:
+      - u8
+      - u10
+    instructions:
+      - Use a short court and allow catches before the return hit.
+      - Score when both players send the ball over the river twice in a row.
+    safetyNotes:
+      - Use soft balls and keep pairs spread across service boxes.
+  - title: Green Ball Recovery Race
+    summary: Players rally over the river while recovering around a cone after each shot.
+    difficulties:
+      - green
+    ages:
+      - u10
+      - u12
+    instructions:
+      - Place a recovery cone two steps behind each player's starting spot.
+      - Players must move around the cone before their partner's next shot crosses the net.
+    progressions:
+      - Require alternating forehand and backhand targets.
+---
+
+## Setup
+
+Use one court or divide a court into lanes. Place cones or flat targets to create a generous target zone through the middle of the court. The target should feel reachable before it feels precise.
+
+## Coaching Cues
+
+- Send the ball with height before trying to add speed.
+- Recover early enough to be balanced before the next shot.
+- Help your partner keep the rally alive.
+
+## Coach Notes
+
+This drill works well as a warmup or as the first rally activity after technical work. Keep the first round cooperative so players understand the target, then add small challenges once rallies become steady.
