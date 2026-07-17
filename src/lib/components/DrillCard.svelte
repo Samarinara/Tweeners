@@ -38,7 +38,9 @@
 		background: var(--white);
 		border-radius: 12px;
 		text-decoration: none;
-		transition: transform 150ms ease, background 150ms ease;
+		transition:
+			transform 150ms ease,
+			background 150ms ease;
 	}
 
 	.drill-card:hover {

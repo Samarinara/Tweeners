@@ -51,22 +51,22 @@
 				<div class="feature-card feature-card--blue">
 					<h2>Browse the library</h2>
 					<p>
-						Every drill is one file with validated metadata. Search by skill, age,
-						difficulty, or equipment to find exactly what you need.
+						Every drill is one file with validated metadata. Search by skill, age, difficulty, or
+						equipment to find exactly what you need.
 					</p>
 				</div>
 				<div class="feature-card feature-card--green">
 					<h2>Filter what matters</h2>
 					<p>
-						Narrow down by player count, coaching focus, and available equipment.
-						No more scrolling through irrelevant results.
+						Narrow down by player count, coaching focus, and available equipment. No more scrolling
+						through irrelevant results.
 					</p>
 				</div>
 				<div class="feature-card feature-card--yellow">
 					<h2>Plan your session</h2>
 					<p>
-						Pick drills, adapt variations, and print a clean page for court-side
-						use. Everything stays shareable and searchable.
+						Pick drills, adapt variations, and print a clean page for court-side use. Everything
+						stays shareable and searchable.
 					</p>
 				</div>
 			</div>
@@ -74,7 +74,7 @@
 	</section>
 
 	<section class="cta">
-		<div class="container cta-inner">
+		<div class="cta-inner container">
 			<h2>Ready to find a drill?</h2>
 			<a class="cta-button" href={resolve('/search')}>Search the library</a>
 		</div>

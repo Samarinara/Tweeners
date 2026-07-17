@@ -19,16 +19,12 @@
 	let { data } = $props();
 
 	let query = $state(data.initialQuery);
-	let selectedDifficulties = $state<Difficulty[]>(
-		data.initialDifficulties as Difficulty[]
-	);
+	let selectedDifficulties = $state<Difficulty[]>(data.initialDifficulties as Difficulty[]);
 	let selectedAges = $state<AgeGroup[]>(data.initialAges as AgeGroup[]);
 	let selectedSkills = $state<SkillFocus[]>(data.initialSkills as SkillFocus[]);
 	let selectedEquipment = $state<Equipment[]>(data.initialEquipment as Equipment[]);
 	let playerCount = $state(data.initialPlayers);
-	let sort = $state<DrillFilters['sort']>(
-		data.initialSort as DrillFilters['sort']
-	);
+	let sort = $state<DrillFilters['sort']>(data.initialSort as DrillFilters['sort']);
 
 	let showMoreFilters = $state(false);
 
@@ -70,10 +66,10 @@
 
 	const activeFilterCount = $derived(
 		selectedDifficulties.length +
-		selectedAges.length +
-		selectedSkills.length +
-		selectedEquipment.length +
-		(playerCount ? 1 : 0)
+			selectedAges.length +
+			selectedSkills.length +
+			selectedEquipment.length +
+			(playerCount ? 1 : 0)
 	);
 
 	const randomDrill = () => {
@@ -106,10 +102,7 @@
 
 			<div class="filters">
 				<div class="filters-primary">
-					<FilterChip
-						active={selectedDifficulties.length > 0}
-						onclick={() => {}}
-					>
+					<FilterChip active={selectedDifficulties.length > 0} onclick={() => {}}>
 						Difficulty{selectedDifficulties.length ? ` (${selectedDifficulties.length})` : ''}
 					</FilterChip>
 					<label class="player-input">
@@ -148,7 +141,8 @@
 							{#each Object.entries(difficulties) as [value, label] (value)}
 								<FilterChip
 									active={selectedDifficulties.includes(value as Difficulty)}
-									onclick={() => (selectedDifficulties = toggle(selectedDifficulties, value as Difficulty))}
+									onclick={() =>
+										(selectedDifficulties = toggle(selectedDifficulties, value as Difficulty))}
 								>
 									{label}
 								</FilterChip>
@@ -181,7 +175,8 @@
 							{#each Object.entries(equipment) as [value, label] (value)}
 								<FilterChip
 									active={selectedEquipment.includes(value as Equipment)}
-									onclick={() => (selectedEquipment = toggle(selectedEquipment, value as Equipment))}
+									onclick={() =>
+										(selectedEquipment = toggle(selectedEquipment, value as Equipment))}
 								>
 									{label}
 								</FilterChip>
@@ -311,7 +306,9 @@
 		font-size: 0.84rem;
 		font-weight: 600;
 		cursor: pointer;
-		transition: background 150ms ease, color 150ms ease;
+		transition:
+			background 150ms ease,
+			color 150ms ease;
 	}
 
 	.more-filters-btn:hover {

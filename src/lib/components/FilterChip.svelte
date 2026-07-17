@@ -10,12 +10,7 @@
 	} = $props();
 </script>
 
-<button
-	class="chip"
-	class:chip--active={active}
-	type="button"
-	{onclick}
->
+<button class="chip" class:chip--active={active} type="button" {onclick}>
 	{@render children()}
 </button>
 
@@ -31,7 +26,9 @@
 		font-size: 0.84rem;
 		font-weight: 600;
 		cursor: pointer;
-		transition: background 150ms ease, color 150ms ease;
+		transition:
+			background 150ms ease,
+			color 150ms ease;
 	}
 
 	.chip:hover {

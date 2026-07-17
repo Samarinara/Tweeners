@@ -23,7 +23,7 @@
 		</div>
 	</div>
 
-	<div class="container drill-content">
+	<div class="drill-content container">
 		<div class="drill-pills">
 			{#each drill.difficulties as difficulty (difficulty)}
 				<Pill color="green">{difficulties[difficulty]}</Pill>
@@ -295,7 +295,9 @@
 		font-size: 0.84rem;
 		font-weight: 600;
 		cursor: pointer;
-		transition: background 150ms ease, color 150ms ease;
+		transition:
+			background 150ms ease,
+			color 150ms ease;
 	}
 
 	.drill-print button:hover {
