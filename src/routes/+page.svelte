@@ -192,6 +192,12 @@
 		}
 	}
 
+	@media (max-width: 640px) {
+		.court {
+			display: none;
+		}
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.court,
 		.search-wrapper {
